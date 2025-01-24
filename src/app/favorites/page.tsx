@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ActivityCard } from "@/components/activity-card"
 import { useFavorites } from "@/contexts/FavoritesContext"
 import { popularActivities } from "@/data/activities"
-import type { Activity } from "@/data/activities"
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites()

@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react"
 import { ActivityCard } from "@/components/activity-card"
-import { CategoryFilter } from "@/components/category-filter"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -204,9 +203,9 @@ export default function Home() {
               <h2 className="text-4xl font-bold text-gradient mb-8">Our Mission</h2>
               <div className="max-w-3xl mx-auto space-y-6 text-white">
                 <p className="text-lg">
-                  We've all been there—days off that slip through your fingers because you don't know what to do, or
+                  We&apos;ve all been there—days off that slip through your fingers because you don&apos;t know what to do, or
                   endless back-and-forth debates with friends about where to go. Before you know it, your free time is
-                  gone, and all you're left with is the regret of another wasted day.
+                  gone, and all you&apos;re left with is the regret of another wasted day.
                 </p>
                 <p className="text-lg">
                   At PlanIT, we're on a mission to change that. We understand how easy it is to overestimate how much

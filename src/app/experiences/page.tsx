@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { ActivityCard } from "@/components/activity-card"
-import { CategoryFilter } from "@/components/category-filter"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
 import { popularActivities } from "@/data/activities"
-import type { Activity } from "@/data/activities"
 
 const experiences = [
   {

@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Textarea } from "@/components/ui/textarea"
 import { Star, MapPin, Send, Heart } from "lucide-react"
 import Image from "next/image"
-import { useFavorites } from "@/contexts/FavoritesContext"
 import { Activity } from "@/data/activities"
 
 export interface ActivityCardProps extends Activity {
