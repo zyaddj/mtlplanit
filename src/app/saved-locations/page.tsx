@@ -1,3 +1,5 @@
+"use client"
+
 import { ActivityCard } from "@/components/activity-card"
 import { Button } from "@/components/ui/button"
 import { MapPin } from 'lucide-react'
@@ -17,6 +19,11 @@ export default function SavedLocations() {
           price="Free"
           image="/placeholder.svg?height=200&width=300"
           rating={4.8}
+          description="A beautiful urban park with panoramic views of Montreal"
+          location="Mount Royal, Montreal"
+          googleMapsUrl="https://goo.gl/maps/mountroyal"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
         <ActivityCard
           title="Old Port"
@@ -24,6 +31,11 @@ export default function SavedLocations() {
           price="Varies"
           image="/placeholder.svg?height=200&width=300"
           rating={4.6}
+          description="Historic waterfront area with shops, restaurants, and activities"
+          location="Old Port, Montreal"
+          googleMapsUrl="https://goo.gl/maps/oldport"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
         <ActivityCard
           title="Botanical Garden"
@@ -31,6 +43,11 @@ export default function SavedLocations() {
           price="$20"
           image="/placeholder.svg?height=200&width=300"
           rating={4.7}
+          description="Beautiful gardens featuring diverse plant collections and themed areas"
+          location="4101 Sherbrooke St E, Montreal"
+          googleMapsUrl="https://goo.gl/maps/botanical"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
         <ActivityCard
           title="Jean-Talon Market"
@@ -38,6 +55,11 @@ export default function SavedLocations() {
           price="Free Entry"
           image="/placeholder.svg?height=200&width=300"
           rating={4.5}
+          description="Vibrant open-air market with local produce and specialty foods"
+          location="7070 Henri Julien Ave, Montreal"
+          googleMapsUrl="https://goo.gl/maps/jeantalon"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
         <ActivityCard
           title="Notre-Dame Basilica"
@@ -45,6 +67,11 @@ export default function SavedLocations() {
           price="$10"
           image="/placeholder.svg?height=200&width=300"
           rating={4.9}
+          description="Gothic Revival church with stunning interior architecture"
+          location="110 Notre-Dame St W, Montreal"
+          googleMapsUrl="https://goo.gl/maps/notredame"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
         <ActivityCard
           title="La Ronde Amusement Park"
@@ -52,6 +79,11 @@ export default function SavedLocations() {
           price="$50"
           image="/placeholder.svg?height=200&width=300"
           rating={4.2}
+          description="Six Flags amusement park with thrilling rides and attractions"
+          location="22 Chemin Macdonald, Montreal"
+          googleMapsUrl="https://goo.gl/maps/laronde"
+          isFavorite={false}
+          onToggleFavorite={() => {}}
         />
       </div>
       <div className="text-center">

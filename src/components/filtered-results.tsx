@@ -1,14 +1,7 @@
-import { ActivityCard } from "@/components/activity-card"
+"use client"
 
-interface Activity {
-  title: string
-  category: string
-  price: string
-  image: string
-  rating: number
-  description?: string
-  location?: string
-}
+import { ActivityCard } from "@/components/activity-card"
+import type { Activity } from "@/data/activities"
 
 interface FilteredResultsProps {
   activities: Activity[]
@@ -26,7 +19,13 @@ export function FilteredResults({ activities }: FilteredResultsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {activities.map((activity, index) => (
-        <ActivityCard key={index} {...activity} />
+        <ActivityCard 
+          key={index} 
+          {...activity} 
+          isFavorite={false}
+          onToggleFavorite={() => {}}
+          googleMapsUrl={activity.googleMapsUrl || `https://www.google.com/maps/search/${encodeURIComponent(activity.location)}`}
+        />
       ))}
     </div>
   )
