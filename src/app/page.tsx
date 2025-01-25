@@ -10,7 +10,7 @@ import { MysteryButton } from "@/components/mystery-button"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, ChevronRight } from "lucide-react"
+import { Search, ChevronRight, Apple, Play } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Sparkles } from "lucide-react"
 import { TypeAnimation } from "react-type-animation"
@@ -21,6 +21,8 @@ export default function Home() {
   const [visibleActivities, setVisibleActivities] = useState(4)
   const [isLoading, setIsLoading] = useState(false)
   const [favorites, setFavorites] = useState<string[]>([])
+  const [email, setEmail] = useState("")
+  const [submitted, setSubmitted] = useState(false)
 
   const loadMore = async () => {
     setIsLoading(true)
@@ -66,18 +68,9 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl font-bold tracking-tight"
+                className="text-4xl font-bold tracking-tight text-white"
               >
-                <TypeAnimation
-                  sequence={[
-                    "Chase the fun, catch the memories",
-                    1000,
-                  ]}
-                  wrapper="span"
-                  speed={50}
-                  className="text-gradient"
-                  cursor={false}
-                />
+                <span className="text-gradient">Chase</span> the fun, <span className="text-gradient">catch</span> the memories
               </motion.div>
               <div className="h-32"></div>
               <motion.p
@@ -86,8 +79,7 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="text-white text-center text-xl"
               >
-                Discover Montreal's <span className="text-gradient">best</span> activities and{" "}
-                <span className="text-gradient">plan</span> your next adventure
+                Discover Montreal's activities and plan your next adventure
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -108,67 +100,101 @@ export default function Home() {
               </motion.div>
             </section>
 
-            {/* Popular Now Section */}
+            {/* App Store Section */}
             <section className="space-y-8">
-              <div className="text-center space-y-3">
+              <div className="text-center space-y-6">
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="text-3xl font-bold font-serif text-white"
-                  style={{ fontSize: "calc(2rem * 0.7)" }}
+                  className="text-3xl font-bold text-white"
                 >
-                  Popular picks <span className="text-orange-400">🔥</span>
+                  Coming Soon to Mobile
                 </motion.h2>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="text-lg text-gray-300"
-                  style={{ fontSize: "calc(1.125rem * 0.7)" }}
                 >
-                  See what fellow Planit users are loving right now
+                  Plan your adventures on the go. Get notified when we launch.
                 </motion.p>
-              </div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-              >
-                {popularActivities.slice(0, visibleActivities).map((activity: Activity, index: number) => (
-                  <div key={index} className="hover-lift-sm">
-                    <ActivityCard
-                      {...activity}
-                      isFavorite={favorites.includes(activity.title)}
-                      onToggleFavorite={() => toggleFavorite(activity.title)}
-                    />
-                  </div>
-                ))}
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="text-center pt-4 flex items-center justify-center gap-4"
-              >
-                <Link href="/experiences">
-                  <Button size="lg" className="btn-gradient hover-lift-sm">
-                    Explore all experiences
-                  </Button>
-                </Link>
-                {visibleActivities < popularActivities.length && (
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={loadMore}
-                    disabled={isLoading}
-                    className="hover:bg-white/10 transition-colors rounded-full p-2"
+
+                {/* Email Collection Form */}
+                <motion.form 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="max-w-md mx-auto space-y-4"
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    try {
+                      const response = await fetch('/api/subscribe', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email }),
+                      })
+                      
+                      if (response.ok) {
+                        setSubmitted(true)
+                        setEmail("")
+                      }
+                    } catch (error) {
+                      console.error('Error:', error)
+                    }
+                  }}
+                >
+                  {submitted ? (
+                    <p className="text-green-400">Thanks for subscribing! We'll keep you updated.</p>
+                  ) : (
+                    <>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="bg-white/5 border-white/10 text-white placeholder-gray-400"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                      <Button type="submit" className="w-full btn-gradient">
+                        Notify Me
+                      </Button>
+                    </>
+                  )}
+                </motion.form>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8"
+                >
+                  <Button 
+                    className="btn-header"
                   >
-                    <ChevronRight className={`h-6 w-6 ${isLoading ? "animate-spin" : "animate-bounce"}`} />
+                    <div className="flex items-center gap-3">
+                      <Apple className="h-5 w-5" />
+                      <div className="text-left">
+                        <div className="text-xs">Download on the</div>
+                        <div className="text-sm font-semibold">App Store</div>
+                      </div>
+                    </div>
                   </Button>
-                )}
-              </motion.div>
+                  <Button 
+                    className="btn-header"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Play className="h-5 w-5" />
+                      <div className="text-left">
+                        <div className="text-xs">Get it on</div>
+                        <div className="text-sm font-semibold">Play Store</div>
+                      </div>
+                    </div>
+                  </Button>
+                </motion.div>
+              </div>
             </section>
 
             {/* Stats Section */}
@@ -197,28 +223,22 @@ export default function Home() {
             {/* Our Mission Section */}
             <section className="text-center space-y-8 py-16">
               <h2 className="text-4xl font-bold text-gradient mb-8">Our Mission</h2>
-              <div className="max-w-3xl mx-auto space-y-6 text-white">
-                <p className="text-lg">
-                  We&apos;ve all been there—days off that slip through your fingers because you don&apos;t know what to do, or
-                  endless back-and-forth debates with friends about where to go. Before you know it, your free time is
-                  gone, and all you&apos;re left with is the regret of another wasted day.
+              <div className="max-w-3xl mx-auto space-y-5 text-white">
+                <p className="text-base">
+                  We've all been there, the day off you've been waiting for slips by in a heartbeat due to indecision. You spend half of it debating with friends about where to go, only to end up doing... nothing. Before you know it, the day is gone, and you're left wondering where all the time went.
                 </p>
-                <p className="text-lg">
-                  At PlanIT, we're on a mission to change that. We understand how easy it is to overestimate how much
-                  time you have left, putting off adventures and missing out on the moments that really matter. That's
-                  why we've built a platform to take the indecision and hassle out of planning, so you can focus on
-                  making the most of your time.
+                <p className="text-base">
+                  At <span className="text-gradient font-semibold">PlanIT</span>, we get it. Life moves fast, and it's easy to overestimate how much time you actually have to make plans. Too often, amazing opportunities are missed simply because planning felt like too much work. That's why we're here, to make sure those precious free moments don't go to waste.
                 </p>
-                <p className="text-lg">
-                  Whether it's uncovering hidden gems in your city, finding the perfect activity for your mood, or
-                  hitting the "Mystery Button" for an instant adventure, PlanIT is here to help you say goodbye to
-                  wasted days and hello to unforgettable memories.
+                <p className="text-base">
+                  With <span className="text-gradient font-semibold">PlanIT</span>, finding your next adventure is as easy as a few clicks. Whether it's uncovering a hidden gem in your city, matching the perfect activity to your vibe, or hitting the "Mystery Button" to challenge your inner spontaneity. We take the stress out of planning so you can focus on what really matters—living.
                 </p>
-                <p className="text-xl font-semibold text-gradient">
-                  Because time is precious, and the best way to honor it is to live it fully—exploring, laughing, and
-                  creating moments you'll cherish forever.
+                <p className="text-base font-medium text-gradient">
+                  Because time is the one thing you can't get back. Let's make it count—exploring, laughing, and creating memories that stick with you long after the day is over.
                 </p>
-                <p className="text-lg font-bold">PlanIT: don't waste the time you have, plan the time you want.</p>
+                <p className="text-base font-bold">
+                  PlanIT: Make the most of now.
+                </p>
               </div>
             </section>
 
