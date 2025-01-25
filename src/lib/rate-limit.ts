@@ -13,7 +13,11 @@ export function createRateLimit(options: {
 
     // Clean old entries
     for (const [key, timestamps] of rateLimitStore.entries()) {
-      const validTimestamps = timestamps.filter(ts => ts >= windowStart)
+      // Ensure we're working with numbers and compare each timestamp
+      const validTimestamps = timestamps
+        .map(ts => Number(ts))
+        .filter(ts => !isNaN(ts) && ts >= windowStart)
+
       if (validTimestamps.length === 0) {
         rateLimitStore.delete(key)
       } else {
@@ -23,7 +27,9 @@ export function createRateLimit(options: {
 
     // Get existing timestamps for this IP
     const timestamps: number[] = rateLimitStore.get(ip) || []
-    const recentTimestamps = timestamps.filter((ts: number) => ts >= windowStart)
+    const recentTimestamps = timestamps
+      .map(ts => Number(ts))
+      .filter(ts => !isNaN(ts) && ts >= windowStart)
 
     if (recentTimestamps.length >= options.limit) {
       return NextResponse.json(
