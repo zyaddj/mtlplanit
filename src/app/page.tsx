@@ -72,15 +72,11 @@ export default function Home() {
                   sequence={[
                     "Chase the fun, catch the memories",
                     1000,
-                    "Plan the adventure, live the story",
-                    1000,
-                    "Explore the city, create moments",
-                    1000,
                   ]}
                   wrapper="span"
                   speed={50}
-                  repeat={Number.POSITIVE_INFINITY}
                   className="text-gradient"
+                  cursor={false}
                 />
               </motion.div>
               <div className="h-32"></div>
