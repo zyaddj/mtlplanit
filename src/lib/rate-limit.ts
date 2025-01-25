@@ -5,7 +5,7 @@ export function createRateLimit(options: {
   interval: number  // in milliseconds
   limit: number
 }) {
-  const rateLimitStore = new Map()
+  const rateLimitStore = new Map<string, number[]>()
 
   return async function rateLimit(ip: string) {
     const now = Date.now()
@@ -19,8 +19,8 @@ export function createRateLimit(options: {
     }
 
     // Get existing timestamps for this IP
-    const timestamps = rateLimitStore.get(ip) || []
-    const recentTimestamps = timestamps.filter(ts => ts > windowStart)
+    const timestamps: number[] = rateLimitStore.get(ip) || []
+    const recentTimestamps = timestamps.filter((ts: number) => ts > windowStart)
 
     if (recentTimestamps.length >= options.limit) {
       return NextResponse.json(
