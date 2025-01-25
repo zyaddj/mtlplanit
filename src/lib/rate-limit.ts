@@ -12,15 +12,18 @@ export function createRateLimit(options: {
     const windowStart = now - options.interval
 
     // Clean old entries
-    for (const [key, timestamp] of rateLimitStore.entries()) {
-      if (timestamp < windowStart) {
+    for (const [key, timestamps] of rateLimitStore.entries()) {
+      const validTimestamps = timestamps.filter(ts => ts >= windowStart)
+      if (validTimestamps.length === 0) {
         rateLimitStore.delete(key)
+      } else {
+        rateLimitStore.set(key, validTimestamps)
       }
     }
 
     // Get existing timestamps for this IP
     const timestamps: number[] = rateLimitStore.get(ip) || []
-    const recentTimestamps = timestamps.filter((ts: number) => ts > windowStart)
+    const recentTimestamps = timestamps.filter((ts: number) => ts >= windowStart)
 
     if (recentTimestamps.length >= options.limit) {
       return NextResponse.json(
