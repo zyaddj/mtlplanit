@@ -27,8 +27,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ActivityCard } from "@/components/activity-card"
 import { useLanguage } from "@/contexts/LanguageContext"
-import { discoverActivities } from "@/lib/places-api"
-import { PlacesAutocomplete } from "./places-autocomplete"
 
 const locations = [
   "Downtown",
@@ -133,11 +131,6 @@ const allActivities = [
   },
 ]
 
-const CATEGORIES = [
-  'restaurant', 'museum', 'park', 'amusement_park', 'art_gallery',
-  'tourist_attraction', 'shopping_mall', 'spa', 'night_club'
-]
-
 export function ChooseSpecificButton({ children }: { children?: React.ReactNode }) {
   const { t } = useLanguage()
   const [step, setStep] = useState(1)
@@ -146,10 +139,6 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
   const [budget, setBudget] = useState(50)
   const [customBudget, setCustomBudget] = useState("")
   const [filteredActivities, setFilteredActivities] = useState(allActivities)
-  const [activities, setActivities] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [priceRange, setPriceRange] = useState([0, 4])
 
   const toggleSelection = (item: string, current: string[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     if (current.includes(item)) {
@@ -220,23 +209,6 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
       setCustomBudget(value)
     } else if (value === "") {
       setCustomBudget("")
-    }
-  }
-
-  const handleSearch = async () => {
-    setLoading(true)
-    try {
-      const results = await discoverActivities({
-        type: selectedCategories[0],
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        radius: 5000
-      })
-      setActivities(results)
-    } catch (error) {
-      console.error('Error discovering activities:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -367,8 +339,8 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                 </div>
               ) : step === 4 ? (
                 <div className="px-4 space-y-6">
-                  {activities.length > 0 ? (
-                    activities.map((activity, index) => (
+                  {filteredActivities.length > 0 ? (
+                    filteredActivities.map((activity, index) => (
                       <ActivityCard 
                         key={index} 
                         {...activity} 
@@ -460,21 +432,6 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             )}
           </div>
         </div>
-        <PlacesAutocomplete
-          onPlaceSelected={(place) => {
-            if (place.geometry?.location) {
-              const lat = place.geometry.location.lat()
-              const lng = place.geometry.location.lng()
-              // Use these coordinates to search for nearby activities
-              handleSearch({
-                location: { lat, lng },
-                ...otherFilters
-              })
-            }
-          }}
-          placeholder="Search for a location..."
-          className="bg-white/5 border-white/10 text-white"
-        />
       </DialogContent>
     </Dialog>
   )
