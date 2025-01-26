@@ -8,33 +8,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Globe } from 'lucide-react'
-
-const languages = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-]
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function LanguageToggle() {
-  const [language, setLanguage] = React.useState("en")
+  const { language, setLanguage } = useLanguage()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Globe className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">Toggle language</span>
+        <Button 
+          className="btn-header w-16 text-sm font-medium"
+        >
+          {language.toUpperCase()}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {languages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => setLanguage(lang.code)}
-          >
-            {lang.name}
-          </DropdownMenuItem>
-        ))}
+      <DropdownMenuContent 
+        align="end"
+        className="bg-black/90 border-purple-500/20 text-white"
+      >
+        <DropdownMenuItem 
+          onClick={() => setLanguage('en')}
+          className="hover:bg-white/10 cursor-pointer"
+        >
+          English
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => setLanguage('fr')}
+          className="hover:bg-white/10 cursor-pointer"
+        >
+          Français
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

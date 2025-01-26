@@ -26,6 +26,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ActivityCard } from "@/components/activity-card"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { discoverActivities } from "@/lib/places-api"
+import { PlacesAutocomplete } from "./places-autocomplete"
 
 const locations = [
   "Downtown",
@@ -130,13 +133,23 @@ const allActivities = [
   },
 ]
 
-export function ChooseSpecificButton({ children }: { children: React.ReactNode }) {
+const CATEGORIES = [
+  'restaurant', 'museum', 'park', 'amusement_park', 'art_gallery',
+  'tourist_attraction', 'shopping_mall', 'spa', 'night_club'
+]
+
+export function ChooseSpecificButton({ children }: { children?: React.ReactNode }) {
+  const { t } = useLanguage()
   const [step, setStep] = useState(1)
   const [selectedLocations, setSelectedLocations] = useState<string[]>([])
   const [selectedActivities, setSelectedActivities] = useState<string[]>([])
   const [budget, setBudget] = useState(50)
   const [customBudget, setCustomBudget] = useState("")
   const [filteredActivities, setFilteredActivities] = useState(allActivities)
+  const [activities, setActivities] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [priceRange, setPriceRange] = useState([0, 4])
 
   const toggleSelection = (item: string, current: string[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     if (current.includes(item)) {
@@ -210,14 +223,31 @@ export function ChooseSpecificButton({ children }: { children: React.ReactNode }
     }
   }
 
+  const handleSearch = async () => {
+    setLoading(true)
+    try {
+      const results = await discoverActivities({
+        type: selectedCategories[0],
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
+        radius: 5000
+      })
+      setActivities(results)
+    } catch (error) {
+      console.error('Error discovering activities:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Dialog onOpenChange={(open) => !open && resetAndClose()}>
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="btn-gradient text-base px-6 py-3 h-auto shadow-md hover:shadow-lg transition-all"
+          className="btn-gradient text-base px-8 py-3 h-auto shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-purple-500 to-white hover:from-purple-600 hover:to-white/90 text-purple-900 font-semibold"
         >
-          {children}
+          {children || t('chooseSpecific')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col dialog-background">
@@ -337,8 +367,8 @@ export function ChooseSpecificButton({ children }: { children: React.ReactNode }
                 </div>
               ) : step === 4 ? (
                 <div className="px-4 space-y-6">
-                  {filteredActivities.length > 0 ? (
-                    filteredActivities.map((activity, index) => (
+                  {activities.length > 0 ? (
+                    activities.map((activity, index) => (
                       <ActivityCard 
                         key={index} 
                         {...activity} 
@@ -430,6 +460,21 @@ export function ChooseSpecificButton({ children }: { children: React.ReactNode }
             )}
           </div>
         </div>
+        <PlacesAutocomplete
+          onPlaceSelected={(place) => {
+            if (place.geometry?.location) {
+              const lat = place.geometry.location.lat()
+              const lng = place.geometry.location.lng()
+              // Use these coordinates to search for nearby activities
+              handleSearch({
+                location: { lat, lng },
+                ...otherFilters
+              })
+            }
+          }}
+          placeholder="Search for a location..."
+          className="bg-white/5 border-white/10 text-white"
+        />
       </DialogContent>
     </Dialog>
   )

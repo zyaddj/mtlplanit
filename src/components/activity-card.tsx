@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Star, MapPin, Send, Heart } from "lucide-react"
 import Image from "next/image"
 import { Activity } from "@/data/activities"
+import { MapsButton } from "./maps-button"
 
 export interface ActivityCardProps extends Activity {
   isFavorite: boolean
@@ -80,6 +81,16 @@ export function ActivityCard({
               <span className="text-sm text-gray-400">{rating.toFixed(1)}</span>
             </div>
           </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-gray-400" />
+              <span className="text-sm text-gray-400">{location}</span>
+            </div>
+            <MapsButton 
+              address={location}
+              name={title}
+            />
+          </div>
           <div className="flex justify-between gap-2 mt-4">
             <Button
               className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs py-1 h-auto"
@@ -117,10 +128,6 @@ export function ActivityCard({
               </div>
             </div>
             <p className="text-sm text-gray-300">{description}</p>
-            <div className="flex items-center text-gray-300">
-              <MapPin className="h-5 w-5 mr-2" />
-              <span className="text-sm">{location}</span>
-            </div>
             <div className="text-right">
               <span className="text-xl font-bold text-white">{price}</span>
             </div>

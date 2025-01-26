@@ -1,59 +1,64 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { WaveBackground } from "@/components/wave-background"
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="relative bg-black/80 text-white pt-20 pb-10 overflow-hidden">
       <WaveBackground />
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">About PlanIT</h3>
+            <h3 className="text-lg font-semibold">{t('company')}</h3>
             <p className="text-sm text-gray-400">
               Discover and plan amazing activities in Montreal. Your adventure starts here.
             </p>
           </div>
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <h3 className="text-lg font-semibold">{t('resources')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  About Us
+                  {t('about')}
                 </Link>
               </li>
               <li>
-                <Link href="/activities" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Activities
+                <Link href="/careers" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t('careers')}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Contact
+                <Link href="/press" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t('press')}
                 </Link>
               </li>
             </ul>
           </div>
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Legal</h3>
+            <h3 className="text-lg font-semibold">{t('legal')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Privacy Policy
+                <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t('termsOfService')}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Terms of Service
+                <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  {t('privacyPolicy')}
                 </Link>
               </li>
             </ul>
           </div>
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Newsletter</h3>
-            <p className="text-sm text-gray-400">Stay updated with our latest offers and events</p>
+            <h3 className="text-lg font-semibold">{t('followUs')}</h3>
+            <p className="text-sm text-gray-400">{t('stayUpdated')}</p>
             <form
               className="flex space-x-2"
               onSubmit={(e) => {
@@ -66,13 +71,13 @@ export function Footer() {
                 type="submit"
                 className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
               >
-                Subscribe
+                {t('subscribe')}
               </Button>
             </form>
           </div>
         </div>
         <div className="border-t border-white/10 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-400">&copy; 2023 PlanIT. All rights reserved.</p>
+          <p className="text-sm text-gray-400">{t('copyright')}</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors">
               <Facebook size={20} />
