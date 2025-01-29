@@ -10,15 +10,15 @@ export function Header() {
   const { t } = useLanguage()
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-purple-900/20">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-blue-900/20">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center -ml-4">
           <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-18%20194851-6eaRU6sjPukX7KjokZY5KBpNMeNG4r.png"
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe_Express_-_file__1_-removebg-preview-KvoQDS38GTuBFzQ3hBAEWX81TmuwR9.png"
             alt="Planit Logo"
-            width={160}
-            height={53}
-            className="h-[2.6rem] w-auto"
+            width={100}
+            height={33}
+            className="h-[1.8rem] w-auto"
             priority
           />
         </Link>
@@ -28,7 +28,7 @@ export function Header() {
             <Input
               type="text"
               placeholder={t('searchPlaceholder')}
-              className="pl-10 py-1 text-sm bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-purple-500 focus:ring-purple-500"
+              className="pl-10 py-1 text-sm bg-white/5 border-white/10 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <Link href="/activities" className="text-sm text-gray-300 hover:text-white transition-colors">

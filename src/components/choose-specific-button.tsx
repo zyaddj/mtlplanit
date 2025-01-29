@@ -217,7 +217,10 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="btn-gradient text-base px-8 py-3 h-auto shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-purple-500 to-white hover:from-purple-600 hover:to-white/90 text-purple-900 font-semibold"
+          className="bg-gradient-to-r from-white/90 to-white/80 text-blue-600
+            font-semibold text-base px-8 py-3 h-auto 
+            shadow-md hover:shadow-lg transition-all backdrop-blur-sm
+            hover:from-white hover:to-white/90 border border-blue-200"
         >
           {children || t('chooseSpecific')}
         </Button>
@@ -235,7 +238,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
               <div className="relative h-full">
                 <div className="absolute inset-0 bg-gray-600"></div>
                 <div
-                  className={`absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300`}
+                  className={`absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-300`}
                   style={{
                     width: step === 1 ? "0%" : step === 2 ? "50%" : "100%",
                     left: step === 1 ? "10px" : "0px",
@@ -250,18 +253,18 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                 key={index}
                 className={`flex-1 flex flex-col items-center relative z-10 ${
                   index + 1 === step
-                    ? "text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500"
+                    ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400"
                     : index + 1 < step
-                      ? "text-purple-500"
+                      ? "text-blue-500"
                       : "text-gray-400"
                 }`}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
                     index + 1 === step
-                      ? "bg-gradient-to-r from-purple-500 to-pink-500"
+                      ? "bg-gradient-to-r from-blue-600 to-blue-400"
                       : index + 1 < step
-                        ? "bg-purple-500"
+                        ? "bg-blue-500"
                         : "bg-gray-600"
                   }`}
                 >
@@ -293,7 +296,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                       }}
                       max={100}
                       step={1}
-                      className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-purple-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-purple-500 [&_.bg-primary]:to-pink-500"
+                      className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-blue-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-blue-600 [&_.bg-primary]:to-blue-400"
                     />
                     <div className="flex justify-between items-center text-gray-300">
                       <span className="text-sm">$0</span>
@@ -310,12 +313,12 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-purple-300 border-purple-500 hover:bg-purple-500/20"
+                            className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
                           >
                             Set Custom Amount
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-60 bg-gray-800 border-purple-500/50">
+                        <PopoverContent className="w-60 bg-gray-800 border-blue-500/50">
                           <div className="space-y-2">
                             <label htmlFor="custom-budget" className="text-sm font-medium text-gray-300">
                               Enter custom budget:
@@ -363,7 +366,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                           variant={selected?.includes(item) ? "default" : "outline"}
                           className={`cursor-pointer transition-all hover:scale-105 px-3 py-2 text-sm flex items-center justify-center text-center ${
                             selected?.includes(item)
-                              ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
+                              ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500"
                               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                           }`}
                           onClick={() => setter && toggleSelection(item, selected || [], setter)}
@@ -377,7 +380,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                           variant={selected?.includes(activity.name) ? "default" : "outline"}
                           className={`cursor-pointer transition-all hover:scale-105 px-3 py-2 text-sm flex items-center justify-center text-center ${
                             selected?.includes(activity.name)
-                              ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
+                              ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500"
                               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                           }`}
                           onClick={() => setter && toggleSelection(activity.name, selected || [], setter)}
@@ -396,7 +399,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             <Button
               variant="outline"
               onClick={() => setter && setter([])}
-              className="text-gray-300 border-gray-600 hover:bg-gray-700"
+              className="text-black bg-white/80 hover:bg-white border-transparent hover:text-black/80"
               disabled={step === 3}
             >
               Clear All
@@ -409,13 +412,13 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                   variant="outline"
                   onClick={handleBack}
                   disabled={step === 1}
-                  className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                  className="text-black bg-white/80 hover:bg-white border-transparent hover:text-black/80"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
                 </Button>
                 <Button
-                  className="w-full btn-gradient"
+                  className="bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 min-w-[100px]"
                   onClick={handleNext}
                 >
                   {step === 3 ? "Find Activities" : selected && selected.length > 0 ? "Next" : "Skip"}
@@ -425,7 +428,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             ) : (
               <Button
                 onClick={resetAndClose}
-                className="btn-gradient"
+                className="bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600"
               >
                 Start Over
               </Button>

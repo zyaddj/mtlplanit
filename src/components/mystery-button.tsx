@@ -120,7 +120,10 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="btn-gradient text-base px-8 py-3 h-auto shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-pink-500 to-white hover:from-pink-600 hover:to-white/90 text-purple-900 font-semibold"
+          className="bg-gradient-to-r from-blue-600 to-blue-500 text-white/95
+            font-semibold text-base px-8 py-3 h-auto 
+            shadow-md hover:shadow-lg transition-all backdrop-blur-sm
+            hover:from-blue-700 hover:to-blue-600"
         >
           <Sparkles className="mr-2 h-5 w-5" />
           {children || t('mysteryButton')}

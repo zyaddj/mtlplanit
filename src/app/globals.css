@@ -73,7 +73,7 @@ body {
 
 /* Add these button styles */
 .btn-primary {
-  @apply bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white;
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white;
 }
 
 /* Update Input styles */
@@ -85,28 +85,28 @@ body {
 
 /* Text gradient */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-white;
 }
 
 /* Button gradient */
 .btn-gradient {
-  @apply bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 
     text-white font-bold text-base px-6 py-3 h-auto shadow-md hover:shadow-lg transition-all;
 }
 
 /* Header button styles */
 .btn-header {
-  @apply bg-transparent hover:bg-purple-900/20 text-purple-200 hover:text-white 
-    border border-purple-500 text-sm px-4 py-2 transition-all;
+  @apply bg-transparent hover:bg-blue-900/20 text-blue-100 hover:text-white 
+    border border-blue-500 text-sm px-4 py-2 transition-all;
 }
 
 /* Update the signup button style */
 .btn-header-gradient {
-  @apply bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
+  @apply bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 
     text-white text-sm px-4 py-2;
 }
 
 /* Dialog/popup dark background */
 .dialog-background {
-  @apply bg-black/95 backdrop-blur-sm border border-purple-500/20;
+  @apply bg-black/95 backdrop-blur-sm border border-blue-500/20;
 }

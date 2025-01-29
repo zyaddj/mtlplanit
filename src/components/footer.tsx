@@ -11,8 +11,7 @@ export function Footer() {
   const { t } = useLanguage()
 
   return (
-    <footer className="relative bg-black/80 text-white pt-20 pb-10 overflow-hidden">
-      <WaveBackground />
+    <footer className="relative bg-black/90 text-white pt-20 pb-10">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="space-y-4">
@@ -76,7 +75,7 @@ export function Footer() {
             </form>
           </div>
         </div>
-        <div className="border-t border-white/10 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-blue-900/20 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">{t('copyright')}</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors">

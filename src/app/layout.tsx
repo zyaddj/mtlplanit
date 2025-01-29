@@ -18,7 +18,7 @@ export default function RootLayout({
           backgroundImage: `
             linear-gradient(to bottom,
               rgba(0, 0, 0, 0.7),
-              rgba(45, 27, 77, 0.7)
+              rgba(0, 32, 96, 0.7)
             ),
             url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pexels-apasaric-1694000.jpg-lQdm5sRthFgEOpBqim1z0UezcrzTmK.jpeg')
           `,
@@ -26,6 +26,7 @@ export default function RootLayout({
           backgroundAttachment: "fixed",
           backgroundPosition: "center",
         }}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
         <Analytics />

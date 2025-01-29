@@ -44,7 +44,7 @@ export function ActivityCard({
 
   return (
     <>
-      <div className="group relative overflow-hidden rounded-xl bg-purple-950/20 border border-purple-800/30 hover:border-purple-700/50 transition-all hover-lift">
+      <div className="group relative overflow-hidden rounded-xl bg-blue-950/20 border border-blue-800/30 hover:border-blue-700/50 transition-all hover-lift">
         <div className="relative h-48 w-full">
           <Image
             src={image || "/placeholder.svg"}
@@ -82,7 +82,7 @@ export function ActivityCard({
           </div>
           <div className="flex justify-between gap-2 mt-4">
             <Button
-              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs py-1 h-auto"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white text-xs py-1 h-auto"
               onClick={() => setIsOpen(true)}
             >
               View Details

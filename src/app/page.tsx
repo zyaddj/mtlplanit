@@ -55,14 +55,14 @@ export default function Home() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex justify-center"
+                className="flex justify-center -ml-4"
               >
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-01-18%20194851-6eaRU6sjPukX7KjokZY5KBpNMeNG4r.png"
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe_Express_-_file__1_-removebg-preview-KvoQDS38GTuBFzQ3hBAEWX81TmuwR9.png"
                   alt="Planit Logo"
-                  width={400}
-                  height={133}
-                  className="w-auto h-24"
+                  width={300}
+                  height={100}
+                  className="w-auto h-20"
                   priority
                 />
               </motion.div>
@@ -236,16 +236,21 @@ export default function Home() {
             </section>
 
             {/* CTA Section */}
-            <section className="text-center space-y-8 bg-gradient-to-r from-purple-800/70 to-pink-700/70 rounded-xl p-8 max-w-3xl mx-auto">
+            <section className="text-center space-y-8 bg-gradient-to-r from-blue-800/70 to-blue-600/70 rounded-xl p-8 max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold">{t('readyToExplore')}</h2>
               <p className="text-lg max-w-xl mx-auto">
                 {t('joinThousands')}
               </p>
-              <Link href="/signup">
-                <Button size="lg" className="bg-white text-purple-800 hover:bg-purple-100 transition-colors mt-4">
-                  {t('signUpNow')}
+              <form className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                />
+                <Button className="bg-gradient-to-r from-white to-white/90 text-blue-700 hover:from-white hover:to-white/95 transition-all">
+                  {t('notifyMe')}
                 </Button>
-              </Link>
+              </form>
             </section>
           </div>
         </main>
