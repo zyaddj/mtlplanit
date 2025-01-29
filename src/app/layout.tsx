@@ -20,7 +20,7 @@ export default function RootLayout({
               rgba(0, 0, 0, 0.7),
               rgba(0, 32, 96, 0.7)
             ),
-            url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pexels-apasaric-1694000.jpg-lQdm5sRthFgEOpBqim1z0UezcrzTmK.jpeg')
+            url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/david-monje-n00dm9FBwrs-unsplash%20(1).jpg-jMF7bjjBwYqeODGTv5NoXNetBhDfhX.jpeg')
           `,
           backgroundSize: "cover",
           backgroundAttachment: "fixed",

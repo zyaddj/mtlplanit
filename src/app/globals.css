@@ -4,6 +4,7 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  padding-right: 0 !important;
 }
 
 @layer base {
@@ -109,4 +110,41 @@ body {
 /* Dialog/popup dark background */
 .dialog-background {
   @apply bg-black/95 backdrop-blur-sm border border-blue-500/20;
+}
+
+/* Add this at the top level */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Or if you want to completely hide scrollbar when dialog opens */
+.dialog-open {
+  overflow: hidden;
+  padding-right: var(--removed-body-scroll-bar-size);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .dialog-background {
+    @apply mx-4;
+  }
+
+  .container {
+    @apply px-4;
+  }
+
+  /* Adjust button sizes for mobile */
+  .btn-gradient, .btn-header-gradient {
+    @apply text-sm px-4 py-2;
+  }
+
+  /* Make activity cards full width on mobile */
+  .grid {
+    @apply grid-cols-1;
+  }
+}
+
+/* Fix dialog width on mobile */
+.dialog-content {
+  @apply w-[95vw] max-w-lg mx-auto;
 }

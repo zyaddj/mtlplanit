@@ -347,6 +347,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                       <ActivityCard 
                         key={index} 
                         {...activity} 
+                        id={activity.title.toLowerCase().replace(/\s+/g, '-')}
                         isFavorite={false}
                         onToggleFavorite={() => {}}
                       />

@@ -8,13 +8,19 @@ import { Textarea } from "@/components/ui/textarea"
 import { Star, MapPin, Send, Heart } from "lucide-react"
 import Image from "next/image"
 import { Activity } from "@/data/activities"
+import { useAuth } from '@/contexts/AuthContext'
+import { SignInDialog } from "@/components/auth/sign-in"
+import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { useFavorites } from "@/contexts/FavoritesContext"
 
 export interface ActivityCardProps extends Activity {
   isFavorite: boolean
-  onToggleFavorite: () => void
+  onToggleFavorite: (id: string) => void
 }
 
 export function ActivityCard({
+  id,
   title,
   category,
   price,
@@ -27,8 +33,12 @@ export function ActivityCard({
   onToggleFavorite,
 }: ActivityCardProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false)
+  const { user } = useAuth()
   const [comment, setComment] = useState("")
   const [comments, setComments] = useState<string[]>([])
+  const { favorites, toggleFavorite } = useFavorites()
+  const [showFeedback, setShowFeedback] = useState(false)
 
   const openGoogleMaps = () => {
     window.open(googleMapsUrl, "_blank")
@@ -42,28 +52,57 @@ export function ActivityCard({
     }
   }
 
+  const handleSuccessfulSignIn = async () => {
+    setShowAuthPrompt(false)
+    await toggleFavorite(id)
+    setShowFeedback(true)
+    setTimeout(() => setShowFeedback(false), 2000)
+  }
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (user?.isAnonymous || !user) {
+      setShowAuthPrompt(true)
+      return
+    }
+
+    await toggleFavorite(id)
+    setShowFeedback(true)
+    setTimeout(() => setShowFeedback(false), 2000)
+  }
+
   return (
     <>
-      <div className="group relative overflow-hidden rounded-xl bg-blue-950/20 border border-blue-800/30 hover:border-blue-700/50 transition-all hover-lift">
+      <div className="relative rounded-xl bg-blue-950/20 border border-blue-800/30 hover:border-blue-700/50 transition-all">
         <div className="relative h-48 w-full">
           <Image
             src={image || "/placeholder.svg"}
             alt={title}
             fill
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover"
+            priority
           />
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 left-2 bg-black/50 hover:bg-black/70 text-white hover:text-pink-500 transition-colors"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onToggleFavorite()
-            }}
+            className="absolute top-2 left-2 bg-black/50 hover:bg-black/70 text-white transition-colors z-10"
+            onClick={handleFavoriteClick}
           >
-            <Heart className={`h-5 w-5 ${isFavorite ? "fill-current text-pink-500" : ""}`} />
+            <Heart 
+              className={`h-5 w-5 transition-colors ${
+                favorites.includes(id)
+                  ? "fill-pink-500 text-pink-500 hover:fill-white hover:text-white" 
+                  : "hover:fill-pink-500 hover:text-pink-500"
+              }`}
+            />
           </Button>
+          {showFeedback && (
+            <div className="absolute top-2 left-12 bg-black/70 text-white text-sm py-1 px-3 rounded-md z-10">
+              {favorites.includes(id) ? 'Added to favorites!' : 'Removed from favorites'}
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
           <Badge className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm border-white/10 text-xs">{price}</Badge>
         </div>
@@ -97,13 +136,37 @@ export function ActivityCard({
         </div>
       </div>
 
+      {/* Auth Prompt Dialog */}
+      <Dialog open={showAuthPrompt} onOpenChange={setShowAuthPrompt}>
+        <DialogContent className="sm:max-w-[425px] dialog-background">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center text-white">
+              Sign In Required
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-center text-gray-300">
+            Please sign in to add activities to your favorites.
+          </p>
+          <div className="flex justify-center gap-4">
+            <SignInDialog onSignInSuccess={handleSuccessfulSignIn} />
+            <Button
+              variant="outline"
+              onClick={() => setShowAuthPrompt(false)}
+              className="btn-header"
+            >
+              Maybe Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-sm border-purple-500/20">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-center text-white">{title}</DialogTitle>
           </DialogHeader>
           <div className="relative h-48 w-full mb-4 rounded-md overflow-hidden">
-            <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" />
+            <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" priority />
           </div>
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-white">{title}</h3>

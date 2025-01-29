@@ -1,18 +1,31 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
-import { Search, Heart } from "lucide-react"
+import { Search, Heart, Menu } from "lucide-react"
 import { LanguageToggle } from "./language-toggle"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { SignInDialog } from "@/components/auth/sign-in"
+import { useAuth } from "@/contexts/AuthContext"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export function Header() {
   const { t } = useLanguage()
+  const { user, signOut } = useAuth()
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false)
+
+  const handleSignOut = async () => {
+    await signOut()
+    setShowSignOutConfirm(false)
+  }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-blue-900/20">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-sm border-b border-blue-900/20">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center -ml-4">
+        <Link href="/" className="flex items-center">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe_Express_-_file__1_-removebg-preview-KvoQDS38GTuBFzQ3hBAEWX81TmuwR9.png"
             alt="Planit Logo"
@@ -22,6 +35,13 @@ export function Header() {
             priority
           />
         </Link>
+        
+        {/* Mobile Menu Button */}
+        <button className="md:hidden">
+          <Menu className="h-6 w-6 text-gray-400" />
+        </button>
+
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -51,20 +71,59 @@ export function Header() {
             {t('favorites')}
           </Link>
         </nav>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden fixed inset-0 bg-black/95 backdrop-blur-sm z-50 transform transition-transform duration-200 ease-in-out">
+          {/* Mobile nav content */}
+        </div>
+
+        {/* Auth Buttons */}
         <div className="flex items-center gap-4">
           <LanguageToggle />
-          <Link href="/login">
-            <Button variant="outline" className="btn-header">
-              {t('login')}
+          {user?.isAnonymous ? (
+            <SignInDialog />
+          ) : user ? (
+            <Button 
+              onClick={() => setShowSignOutConfirm(true)} 
+              variant="outline" 
+              className="btn-header"
+            >
+              Sign Out
             </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="btn-header-gradient">
-              {t('signup')}
-            </Button>
-          </Link>
+          ) : (
+            <SignInDialog />
+          )}
         </div>
       </div>
+
+      {/* Sign Out Confirmation Dialog */}
+      <Dialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
+        <DialogContent className="sm:max-w-[425px] dialog-background">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-center text-white">
+              Sign Out
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-center text-gray-300">
+            Are you sure you want to sign out?
+          </p>
+          <div className="flex justify-center gap-4 mt-4">
+            <Button
+              onClick={handleSignOut}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Yes, Sign Out
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowSignOutConfirm(false)}
+              className="btn-header"
+            >
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   )
 }

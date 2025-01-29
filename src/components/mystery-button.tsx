@@ -131,8 +131,8 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dialog-background">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            {step === 1 ? "Set Your Budget" : "Your Mystery Activity"}
+          <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-blue-500 to-white bg-clip-text text-transparent">
+            Set Your Budget
           </DialogTitle>
         </DialogHeader>
         {step === 1 ? (
@@ -146,7 +146,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                 }}
                 max={100}
                 step={1}
-                className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-purple-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-purple-500 [&_.bg-primary]:to-pink-500"
+                className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-blue-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-blue-600 [&_.bg-primary]:to-blue-400"
               />
               <div className="flex justify-between items-center text-gray-300">
                 <span className="text-sm">$0</span>
@@ -154,7 +154,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
               </div>
             </div>
             <div className="text-center space-y-6">
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-white bg-clip-text text-transparent">
                 {budget === 100 ? "Over $100" : customBudget ? `$${customBudget}` : `$${budget.toFixed(2)}`}
               </p>
               <div className="mt-8">
@@ -163,7 +163,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-purple-300 border-purple-500 hover:bg-purple-500/20"
+                      className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
                     >
                       Set Custom Amount
                     </Button>
@@ -201,6 +201,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
             {randomActivity ? (
               <ActivityCard 
                 {...randomActivity} 
+                id={randomActivity.title.toLowerCase().replace(/\s+/g, '-')}
                 isFavorite={false}
                 onToggleFavorite={() => {}}
               />

@@ -14,6 +14,7 @@ export default function SavedLocations() {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ActivityCard
+          id="mount-royal-park"
           title="Mount Royal Park"
           category="Nature"
           price="Free"
@@ -26,6 +27,7 @@ export default function SavedLocations() {
           onToggleFavorite={() => {}}
         />
         <ActivityCard
+          id="old-port"
           title="Old Port"
           category="Sightseeing"
           price="Varies"
@@ -38,6 +40,7 @@ export default function SavedLocations() {
           onToggleFavorite={() => {}}
         />
         <ActivityCard
+          id="botanical-garden"
           title="Botanical Garden"
           category="Nature"
           price="$20"
@@ -50,6 +53,7 @@ export default function SavedLocations() {
           onToggleFavorite={() => {}}
         />
         <ActivityCard
+          id="jean-talon-market"
           title="Jean-Talon Market"
           category="Food & Shopping"
           price="Free Entry"
@@ -62,6 +66,7 @@ export default function SavedLocations() {
           onToggleFavorite={() => {}}
         />
         <ActivityCard
+          id="notre-dame-basilica"
           title="Notre-Dame Basilica"
           category="Architecture"
           price="$10"
@@ -74,6 +79,7 @@ export default function SavedLocations() {
           onToggleFavorite={() => {}}
         />
         <ActivityCard
+          id="la-ronde-amusement-park"
           title="La Ronde Amusement Park"
           category="Entertainment"
           price="$50"
