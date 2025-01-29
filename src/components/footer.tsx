@@ -65,10 +65,14 @@ export function Footer() {
                 console.log("Newsletter signup")
               }}
             >
-              <Input type="email" placeholder="Enter your email" className="bg-white/5 border-white/10 text-white" />
+              <Input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="bg-white/5 border-white/10 text-white" 
+              />
               <Button
                 type="submit"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white"
               >
                 {t('subscribe')}
               </Button>
