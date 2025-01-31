@@ -16,6 +16,7 @@ export function Header() {
   const { t } = useLanguage()
   const { user, signOut } = useAuth()
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleSignOut = async () => {
     await signOut()
@@ -86,40 +87,65 @@ export function Header() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 hover:bg-white/10 rounded-md">
+        <button 
+          className="md:hidden p-2 hover:bg-white/10 rounded-md"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
           <Menu className="h-6 w-6 text-white" />
         </button>
       </div>
 
       {/* Mobile Navigation Drawer */}
-      <div className="md:hidden">
-        <nav className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-blue-900/20 py-4 px-4 space-y-4">
-          <Link href="/activities" className="block text-sm text-gray-300 hover:text-white py-2">
-            {t('activities')}
-          </Link>
-          <Link href="/locations" className="block text-sm text-gray-300 hover:text-white py-2">
-            {t('locations')}
-          </Link>
-          <Link href="/about" className="block text-sm text-gray-300 hover:text-white py-2">
-            {t('about')}
-          </Link>
-          <Link href="/pricing" className="block text-sm text-gray-300 hover:text-white py-2">
-            Pricing
-          </Link>
-          <Link href="/favorites" className="block text-sm text-gray-300 hover:text-white py-2 flex items-center">
-            <Heart className="w-4 h-4 mr-2" />
-            {t('favorites')}
-          </Link>
-          <div className="relative w-full py-2">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder={t('searchPlaceholder')}
-              className="w-full pl-10 py-1 text-sm bg-white/5 border-white/10 text-white placeholder-gray-400"
-            />
-          </div>
-        </nav>
-      </div>
+      {isMobileMenuOpen && (
+        <div className="md:hidden">
+          <nav className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-blue-900/20 py-4 px-4 space-y-4">
+            <Link 
+              href="/activities" 
+              className="block text-sm text-gray-300 hover:text-white py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('activities')}
+            </Link>
+            <Link 
+              href="/locations" 
+              className="block text-sm text-gray-300 hover:text-white py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('locations')}
+            </Link>
+            <Link 
+              href="/about" 
+              className="block text-sm text-gray-300 hover:text-white py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('about')}
+            </Link>
+            <Link 
+              href="/pricing" 
+              className="block text-sm text-gray-300 hover:text-white py-2"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Pricing
+            </Link>
+            <Link 
+              href="/favorites" 
+              className="block text-sm text-gray-300 hover:text-white py-2 flex items-center"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <Heart className="w-4 h-4 mr-2" />
+              {t('favorites')}
+            </Link>
+            <div className="relative w-full py-2">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder={t('searchPlaceholder')}
+                className="w-full pl-10 py-1 text-sm bg-white/5 border-white/10 text-white placeholder-gray-400"
+              />
+            </div>
+          </nav>
+        </div>
+      )}
 
       {/* Sign Out Confirmation Dialog */}
       <Dialog open={showSignOutConfirm} onOpenChange={setShowSignOutConfirm}>
