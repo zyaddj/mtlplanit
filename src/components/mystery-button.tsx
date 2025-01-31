@@ -9,10 +9,23 @@ import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ActivityCard } from "@/components/activity-card"
 import { useLanguage } from "@/contexts/LanguageContext"
+import { Badge } from "@/components/ui/badge"
+import { MapPin, ChevronDown } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { MultiSelect } from "@/components/ui/multi-select"
+import { fetchGooglePlaces } from '@/lib/google-places'
 
 // Mock data for activities with complete information
 const allActivities = [
   {
+    id: "mount-royal-hike",
     title: "Mount Royal Sunset Hike",
     category: "Active",
     price: "Free",
@@ -25,6 +38,7 @@ const allActivities = [
     googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
   },
   {
+    id: "old-port-food",
     title: "Old Port Food Tour",
     category: "Food & Drink",
     price: "$75",
@@ -37,6 +51,7 @@ const allActivities = [
     googleMapsUrl: "https://goo.gl/maps/QMXmqKwjsTZwvqSt8",
   },
   {
+    id: "jazz-night",
     title: "Jazz Night at Upstairs Jazz Bar",
     category: "Live Music",
     price: "$20",
@@ -49,6 +64,7 @@ const allActivities = [
     googleMapsUrl: "https://goo.gl/maps/5QX7vZ7Z8Z9Z9Z9Z9",
   },
   {
+    id: "botanical-garden",
     title: "Botanical Garden Tour",
     category: "Nature",
     price: "$20",
@@ -61,6 +77,7 @@ const allActivities = [
     googleMapsUrl: "https://goo.gl/maps/7Z7Z7Z7Z7Z7Z7Z7Z7",
   },
   {
+    id: "biosphere",
     title: "Biosphere Environmental Museum",
     category: "Museums",
     price: "$15",
@@ -74,13 +91,31 @@ const allActivities = [
   },
 ]
 
+const locations = [
+  "Downtown",
+  "Old Port",
+  "Plateau",
+  "Mile End",
+  "Westmount",
+  "Griffintown",
+  "Little Italy",
+  "Saint-Henri",
+  "Côte-des-Neiges",
+  "NDG",
+  "Villeray",
+  "Rosemont",
+]
+
 export function MysteryButton({ children }: { children?: React.ReactNode }) {
   const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
   const [budget, setBudget] = useState(50)
   const [customBudget, setCustomBudget] = useState("")
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([])
   const [randomActivity, setRandomActivity] = useState<(typeof allActivities)[0] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const handleCustomBudgetChange = (value: string) => {
     const numValue = Number.parseFloat(value)
@@ -92,13 +127,36 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
     }
   }
 
-  const findRandomActivity = () => {
-    const filtered = allActivities.filter((activity) => {
-      return activity.price === "Free" || Number.parseFloat(activity.price.replace("$", "")) <= budget
+  const handleLocationChange = (value: string) => {
+    setSelectedLocations(prev => {
+      if (prev.includes(value)) {
+        return prev.filter(loc => loc !== value)
+      }
+      return [...prev, value]
     })
-    const randomIndex = Math.floor(Math.random() * filtered.length)
-    setRandomActivity(filtered[randomIndex] || null)
-    setStep(2)
+  }
+
+  const handleFindActivity = async () => {
+    setLoading(true)
+    try {
+      const activities = await fetchGooglePlaces({
+        locations: selectedLocations,
+        budget: budget
+      })
+
+      if (activities && activities.length > 0) {
+        const randomIndex = Math.floor(Math.random() * activities.length)
+        setRandomActivity(activities[randomIndex])
+        setStep(2)
+      } else {
+        // Handle no results
+        console.error('No activities found')
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const resetAndClose = () => {
@@ -106,6 +164,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
     setBudget(50)
     setCustomBudget("")
     setRandomActivity(null)
+    setSelectedLocations([])
     setIsOpen(false)
   }
 
@@ -113,8 +172,8 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
+        setIsOpen(open)
         if (!open) resetAndClose()
-        else setIsOpen(true)
       }}
     >
       <DialogTrigger asChild>
@@ -129,92 +188,155 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
           {children || t('mysteryButton')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] dialog-background">
+      <DialogContent 
+        className="sm:max-w-[425px] dialog-background max-h-[90vh]"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center bg-gradient-to-r from-blue-500 to-white bg-clip-text text-transparent">
-            Set Your Budget
+          <DialogTitle className="text-2xl font-bold text-center text-white">
+            {step === 2 ? "Here's Your Mystery Activity!" : "Find Me Something Fun"}
           </DialogTitle>
         </DialogHeader>
-        {step === 1 ? (
-          <div className="mt-4 space-y-6">
-            <div className="space-y-2">
-              <Slider
-                value={[budget]}
-                onValueChange={(value) => {
-                  setBudget(value[0])
-                  setCustomBudget(value[0].toFixed(2))
-                }}
-                max={100}
-                step={1}
-                className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-blue-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-blue-600 [&_.bg-primary]:to-blue-400"
-              />
-              <div className="flex justify-between items-center text-gray-300">
-                <span className="text-sm">$0</span>
-                <span className="text-sm">$100</span>
+
+        <div className="space-y-4">
+          {step === 1 && (
+            <>
+              <div className="mt-4 space-y-6">
+                <div className="space-y-2">
+                  <Slider
+                    value={[budget]}
+                    onValueChange={(value) => {
+                      setBudget(value[0])
+                      setCustomBudget(value[0].toFixed(2))
+                    }}
+                    max={100}
+                    step={1}
+                    className="[&_[role=slider]]:bg-white [&_[role=slider]]:border-blue-500 [&_[role=slider]]:shadow-md [&_.bg-primary]:bg-gradient-to-r [&_.bg-primary]:from-blue-600 [&_.bg-primary]:to-blue-400"
+                  />
+                  <div className="flex justify-between items-center text-gray-300">
+                    <span className="text-sm">$0</span>
+                    <span className="text-sm">$100</span>
+                  </div>
+                </div>
+                <div className="text-center space-y-6">
+                  <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-white bg-clip-text text-transparent">
+                    {budget === 100 ? "Over $100" : customBudget ? `$${customBudget}` : `$${budget.toFixed(2)}`}
+                  </p>
+                  <div className="mt-8">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
+                        >
+                          Set Custom Amount
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-60 bg-gray-800 border-purple-500/50">
+                        <div className="space-y-2">
+                          <label htmlFor="custom-budget" className="text-sm font-medium text-gray-300">
+                            Enter custom budget:
+                          </label>
+                          <Input
+                            id="custom-budget"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max="100"
+                            placeholder="Enter amount"
+                            value={customBudget}
+                            onChange={(e) => handleCustomBudgetChange(e.target.value)}
+                            className="bg-gray-700 border-gray-600 text-white"
+                          />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+                <div className="flex justify-center pt-2">
+                  <button
+                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors"
+                  >
+                    {showAdvancedFilters ? "Hide" : "Show"} Advanced Filters
+                    <ChevronDown 
+                      className={`w-4 h-4 transition-transform ${
+                        showAdvancedFilters ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <AnimatePresence>
+                {showAdvancedFilters && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-2"
+                  >
+                    <label className="text-sm font-medium text-gray-200">
+                      Filter by Location(s)
+                    </label>
+                    <MultiSelect
+                      options={locations}
+                      selected={selectedLocations}
+                      onChange={handleLocationChange}
+                      placeholder="Select locations..."
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <Button
+                className="w-full btn-gradient mt-4"
+                onClick={handleFindActivity}
+                disabled={loading}
+              >
+                {loading ? "Finding Activity..." : "Find My Mystery Activity!"}
+              </Button>
+            </>
+          )}
+
+          {step === 2 && randomActivity && (
+            <div className="space-y-4">
+              <div className="transform scale-90 origin-top">
+                <ActivityCard
+                  {...randomActivity}
+                  isFavorite={false}
+                  onToggleFavorite={() => {}}
+                />
+              </div>
+              <div className="flex justify-center gap-4">
+                <Button
+                  onClick={handleFindActivity}
+                  className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium"
+                >
+                  Try Another
+                </Button>
+                <Button
+                  onClick={resetAndClose}
+                  variant="outline"
+                  className="border-blue-500/20 text-white hover:bg-blue-500/10"
+                >
+                  Start Over
+                </Button>
               </div>
             </div>
-            <div className="text-center space-y-6">
-              <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-white bg-clip-text text-transparent">
-                {budget === 100 ? "Over $100" : customBudget ? `$${customBudget}` : `$${budget.toFixed(2)}`}
-              </p>
-              <div className="mt-8">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
-                    >
-                      Set Custom Amount
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-60 bg-gray-800 border-purple-500/50">
-                    <div className="space-y-2">
-                      <label htmlFor="custom-budget" className="text-sm font-medium text-gray-300">
-                        Enter custom budget:
-                      </label>
-                      <Input
-                        id="custom-budget"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        placeholder="Enter amount"
-                        value={customBudget}
-                        onChange={(e) => handleCustomBudgetChange(e.target.value)}
-                        className="bg-gray-700 border-gray-600 text-white"
-                      />
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
+          )}
+        </div>
+
+        {showAdvancedFilters && (
+          <div className="flex justify-end mt-4 pt-4 border-t border-gray-700">
             <Button
-              className="w-full btn-gradient"
-              onClick={findRandomActivity}
+              variant="outline"
+              onClick={() => setShowAdvancedFilters(false)}
+              className="text-white hover:bg-white/10"
             >
-              Find My Mystery Activity!
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-4 space-y-4">
-            {randomActivity ? (
-              <ActivityCard 
-                {...randomActivity} 
-                id={randomActivity.title.toLowerCase().replace(/\s+/g, '-')}
-                isFavorite={false}
-                onToggleFavorite={() => {}}
-              />
-            ) : (
-              <p className="text-center text-gray-300">
-                No activities found within your budget. Try increasing your budget or try again.
-              </p>
-            )}
-            <Button
-              className="w-full btn-gradient"
-              onClick={resetAndClose}
-            >
-              Start Over
+              Done with Filters
             </Button>
           </div>
         )}

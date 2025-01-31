@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# google places
+google-places-api-key.json  
+
+# Environment variables
+.env.local
+.env.*.local

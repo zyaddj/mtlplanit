@@ -22,6 +22,7 @@ import {
   Building,
   Mic,
   Theater,
+  ChevronDown,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -139,6 +140,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
   const [budget, setBudget] = useState(50)
   const [customBudget, setCustomBudget] = useState("")
   const [filteredActivities, setFilteredActivities] = useState(allActivities)
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
 
   const toggleSelection = (item: string, current: string[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     if (current.includes(item)) {
@@ -210,6 +212,14 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
     } else if (value === "") {
       setCustomBudget("")
     }
+  }
+
+  const toggleLocation = (location: string) => {
+    setSelectedLocations(prev => 
+      prev.includes(location) 
+        ? prev.filter(l => l !== location)
+        : [...prev, location]
+    )
   }
 
   return (

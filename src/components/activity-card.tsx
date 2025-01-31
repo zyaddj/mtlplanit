@@ -14,9 +14,22 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useFavorites } from "@/contexts/FavoritesContext"
 
-export interface ActivityCardProps extends Activity {
+interface ActivityCardProps {
+  id: string
+  title: string
+  category: string
+  price: string
+  image: string
+  rating: number
+  description: string
+  location: string
+  coordinates?: {
+    lat: number
+    lng: number
+  }
+  googleMapsUrl: string
   isFavorite: boolean
-  onToggleFavorite: (id: string) => void
+  onToggleFavorite: () => void
 }
 
 export function ActivityCard({
@@ -28,6 +41,7 @@ export function ActivityCard({
   rating,
   description,
   location,
+  coordinates,
   googleMapsUrl,
   isFavorite,
   onToggleFavorite,
@@ -75,64 +89,40 @@ export function ActivityCard({
 
   return (
     <>
-      <div className="relative rounded-xl bg-blue-950/20 border border-blue-800/30 hover:border-blue-700/50 transition-all">
-        <div className="relative h-48 w-full">
-          <Image
-            src={image || "/placeholder.svg"}
-            alt={title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 left-2 bg-black/50 hover:bg-black/70 text-white transition-colors z-10"
-            onClick={handleFavoriteClick}
-          >
-            <Heart 
-              className={`h-5 w-5 transition-colors ${
-                favorites.includes(id)
-                  ? "fill-pink-500 text-pink-500 hover:fill-white hover:text-white" 
-                  : "hover:fill-pink-500 hover:text-pink-500"
-              }`}
-            />
-          </Button>
-          {showFeedback && (
-            <div className="absolute top-2 left-12 bg-black/70 text-white text-sm py-1 px-3 rounded-md z-10">
-              {favorites.includes(id) ? 'Added to favorites!' : 'Removed from favorites'}
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
-          <Badge className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm border-white/10 text-xs">{price}</Badge>
+      <div className="bg-white/10 p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+        <Image
+          src={image}
+          alt={title}
+          width={300}
+          height={200}
+          className="rounded-md mb-4"
+        />
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-xl font-bold text-white">{title} 🌟</h3>
+          <button onClick={handleFavoriteClick} className="text-red-500 hover:text-red-600">
+            <Heart className={`w-6 h-6 ${favorites.includes(id) ? 'fill-current' : ''}`} />
+          </button>
         </div>
-        <div className="p-4 space-y-2">
-          <h3 className="font-semibold text-lg text-white group-hover:text-purple-400 transition-colors line-clamp-1">
-            {title}
-          </h3>
-          <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="bg-white/5 hover:bg-white/10 text-white text-xs">
-              {category}
-            </Badge>
-            <div className="flex items-center">
-              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-              <span className="text-sm text-gray-400">{rating.toFixed(1)}</span>
-            </div>
-          </div>
-          <div className="flex justify-between gap-2 mt-4">
-            <Button
-              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white text-xs py-1 h-auto"
-              onClick={() => setIsOpen(true)}
-            >
-              View Details
-            </Button>
-            <Button
-              className="flex-1 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white text-xs py-1 h-auto"
-              onClick={openGoogleMaps}
-            >
-              Open on Maps
-            </Button>
-          </div>
+        <p className="text-gray-300 mb-2">{category}</p>
+        <div className="flex items-center mb-4">
+          <Star className="text-yellow-400 w-5 h-5 mr-1" />
+          <span className="text-white">{rating.toFixed(1)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium"
+          >
+            View Details 📜
+          </Button>
+          <a
+            href={googleMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-500 transition-colors"
+          >
+            Open Maps 🗺️
+          </a>
         </div>
       </div>
 
@@ -161,52 +151,73 @@ export function ActivityCard({
       </Dialog>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-sm border-purple-500/20">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-center text-white">{title}</DialogTitle>
+        <DialogContent className="max-w-2xl bg-gradient-to-b from-gray-900/95 to-black/95 border border-gray-800/50 shadow-xl backdrop-blur-sm p-6 rounded-xl">
+          <DialogHeader className="space-y-4">
+            <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              {title} ✨
+            </DialogTitle>
+            
+            {/* Price & Rating Banner */}
+            <div className="flex justify-center gap-6 text-sm">
+              <Badge className="px-3 py-1 bg-green-500/20 text-green-400 border-green-500/30">
+                {price}
+              </Badge>
+              <Badge className="px-3 py-1 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                <Star className="w-4 h-4 mr-1 inline" />
+                {rating.toFixed(1)}
+              </Badge>
+            </div>
           </DialogHeader>
-          <div className="relative h-48 w-full mb-4 rounded-md overflow-hidden">
-            <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" priority />
-          </div>
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-white">{title}</h3>
-            <div className="flex items-center justify-between">
-              <Badge variant="secondary" className="bg-white/5 text-white">
+
+          {/* Main Content */}
+          <div className="mt-6 space-y-6">
+            {/* Image Container */}
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-800/50">
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* Description & Location */}
+            <div className="space-y-4">
+              <p className="text-lg leading-relaxed text-gray-300">
+                {description}
+              </p>
+              <div className="flex items-start gap-2 text-gray-400">
+                <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
+                <p className="text-sm">{location}</p>
+              </div>
+            </div>
+
+            {/* Category Tags */}
+            <div className="flex flex-wrap gap-2">
+              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
                 {category}
               </Badge>
-              <div className="flex items-center">
-                <Star className="h-5 w-5 fill-yellow-400 text-yellow-400 mr-1" />
-                <span className="text-lg text-white font-semibold">{rating.toFixed(1)}</span>
-              </div>
             </div>
-            <p className="text-sm text-gray-300">{description}</p>
-            <div className="flex items-center text-gray-300">
-              <MapPin className="h-5 w-5 mr-2" />
-              <span className="text-sm">{location}</span>
-            </div>
-            <div className="text-right">
-              <span className="text-xl font-bold text-white">{price}</span>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-semibold text-white">Comments</h4>
-              <div className="max-h-40 overflow-y-auto space-y-2">
-                {comments.map((c, index) => (
-                  <div key={index} className="bg-white/10 p-2 rounded-md text-sm text-gray-300">
-                    {c}
-                  </div>
-                ))}
-              </div>
-              <form onSubmit={handleCommentSubmit} className="flex items-center gap-2">
-                <Textarea
-                  placeholder="Leave a comment..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="flex-grow bg-white/5 border-white/10 text-white"
-                />
-                <Button type="submit" size="icon" className="bg-purple-600 hover:bg-purple-700">
-                  <Send className="h-4 w-4" />
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-purple-500/20"
+              >
+                Try Another 🎲
+              </Button>
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium py-5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-emerald-500/20">
+                  Open Maps 🗺️
                 </Button>
-              </form>
+              </a>
             </div>
           </div>
         </DialogContent>
