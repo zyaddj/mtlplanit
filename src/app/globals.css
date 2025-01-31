@@ -148,3 +148,20 @@ html {
 .dialog-content {
   @apply w-[95vw] max-w-lg mx-auto;
 }
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    @apply px-3;
+  }
+}
+
+/* Custom breakpoint for very small screens */
+@media (max-width: 360px) {
+  .xs\:hidden {
+    display: none;
+  }
+  .xs\:block {
+    display: block;
+  }
+}
