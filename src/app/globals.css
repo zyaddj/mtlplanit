@@ -142,6 +142,19 @@ html {
   .grid {
     @apply grid-cols-1;
   }
+
+  body {
+    background-attachment: scroll !important; /* Forces mobile to behave better */
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+  .feedback-button {
+    bottom: 1rem;
+    right: 1rem;
+  }
 }
 
 /* Fix dialog width on mobile */
@@ -164,4 +177,21 @@ html {
   .xs\:block {
     display: block;
   }
+}
+
+/* Add to your existing styles */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.feedback-button-float {
+  animation: float 3s ease-in-out infinite;
 }

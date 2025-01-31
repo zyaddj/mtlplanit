@@ -2,6 +2,7 @@ import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import { Providers } from "@/components/providers"
 import { Analytics } from '@vercel/analytics/react'
+import { FeedbackForm } from "@/components/feedback-form"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,10 +26,17 @@ export default function RootLayout({
           backgroundSize: "cover",
           backgroundAttachment: "fixed",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "100vh",
+          width: "100%",
+          overflowX: "hidden"
         }}
         suppressHydrationWarning
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <FeedbackForm />
+        </Providers>
         <Analytics />
       </body>
     </html>
