@@ -226,12 +226,24 @@ export default function Home() {
             {/* Our Mission Section */}
             <section className="text-center space-y-8 py-16">
               <h2 className="text-4xl font-bold text-gradient mb-8">{t('ourMission')}</h2>
-              <div className="max-w-3xl mx-auto space-y-5 text-white">
-                <p className="text-base">{t('missionText1')}</p>
-                <p className="text-base">{t('missionText2')}</p>
-                <p className="text-base">{t('missionText3')}</p>
-                <p className="text-base font-medium text-gradient">{t('missionText4')}</p>
-                <p className="text-base font-bold">{t('tagline')}</p>
+              <div className="max-w-3xl mx-auto space-y-6 text-white">
+                <p className="text-lg">
+                  At PlanIT, we believe life is meant to be <span className="text-blue-400">lived</span>—not spent endlessly scrolling, 
+                  trying to decide what to do. Too often, great experiences slip away because of indecision, 
+                  inconvenience, or simply not knowing what's out there.
+                </p>
+                <p className="text-lg font-medium text-gradient">
+                  Our mission is to change that.
+                </p>
+                <p className="text-lg">
+                  We're here to make discovering new experiences <span className="text-blue-400">effortless</span>, bringing people 
+                  together through shared moments of <span className="text-blue-400">joy</span>, <span className="text-blue-400">adventure</span>, 
+                  and <span className="text-blue-400">connection</span>. Whether it's a spontaneous outing, a long-awaited plan with 
+                  friends, or a solo escape into something new, PlanIT makes finding and choosing activities seamless.
+                </p>
+                <p className="text-xl font-medium text-gradient italic">
+                  Because the best memories aren't just planned—they're lived.
+                </p>
               </div>
             </section>
 
