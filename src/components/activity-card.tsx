@@ -151,73 +151,36 @@ export function ActivityCard({
       </Dialog>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl bg-gradient-to-b from-gray-900/95 to-black/95 border border-gray-800/50 shadow-xl backdrop-blur-sm p-6 rounded-xl">
-          <DialogHeader className="space-y-4">
-            <DialogTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {title} ✨
-            </DialogTitle>
-            
-            {/* Price & Rating Banner */}
-            <div className="flex justify-center gap-6 text-sm">
-              <Badge className="px-3 py-1 bg-green-500/20 text-green-400 border-green-500/30">
-                {price}
-              </Badge>
-              <Badge className="px-3 py-1 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                <Star className="w-4 h-4 mr-1 inline" />
-                {rating.toFixed(1)}
-              </Badge>
-            </div>
+        <DialogContent className="bg-black/80 text-white rounded-lg p-6">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{title} 🌟</DialogTitle>
           </DialogHeader>
-
-          {/* Main Content */}
-          <div className="mt-6 space-y-6">
-            {/* Image Container */}
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-800/50">
-              <Image
-                src={image}
-                alt={title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            {/* Description & Location */}
-            <div className="space-y-4">
-              <p className="text-lg leading-relaxed text-gray-300">
-                {description}
-              </p>
-              <div className="flex items-start gap-2 text-gray-400">
-                <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
-                <p className="text-sm">{location}</p>
-              </div>
-            </div>
-
-            {/* Category Tags */}
-            <div className="flex flex-wrap gap-2">
-              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                {category}
-              </Badge>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4 pt-4">
-              <Button
-                onClick={() => setIsOpen(false)}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-purple-500/20"
-              >
-                Try Another 🎲
-              </Button>
+          <div className="space-y-4">
+            <Image
+              src={image}
+              alt={title}
+              width={500}
+              height={300}
+              className="rounded-md"
+            />
+            <p className="text-lg">{description}</p>
+            <p className="text-lg font-bold">Price: {price}</p>
+            <p className="text-lg">Location: {location}</p>
+            <div className="flex justify-between items-center">
               <a
                 href={googleMapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full"
+                className="text-blue-400 hover:text-blue-500 transition-colors"
               >
-                <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium py-5 rounded-xl transition-all duration-200 shadow-lg hover:shadow-emerald-500/20">
-                  Open Maps 🗺️
-                </Button>
+                Open in Google Maps 🗺️
               </a>
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="bg-gradient-to-r from-red-600 to-red-400 hover:from-red-700 hover:to-red-500 text-white font-medium"
+              >
+                Close
+              </Button>
             </div>
           </div>
         </DialogContent>

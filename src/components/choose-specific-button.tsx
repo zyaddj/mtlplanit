@@ -446,6 +446,50 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             )}
           </div>
         </div>
+        <div className="flex justify-center pt-4 border-t border-gray-700">
+          <button
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors w-full justify-center"
+          >
+            {showAdvancedFilters ? "Hide" : "Show"} Advanced Filters
+            <ChevronDown 
+              className={`w-4 h-4 transition-transform ${
+                showAdvancedFilters ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+        </div>
+        {showAdvancedFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-200">
+                Locations
+              </label>
+              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
+                {locations.map((location) => (
+                  <Badge
+                    key={location}
+                    variant={selectedLocations.includes(location) ? "default" : "outline"}
+                    className={`cursor-pointer transition-all hover:scale-105 ${
+                      selectedLocations.includes(location)
+                        ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500"
+                        : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    }`}
+                    onClick={() => toggleLocation(location)}
+                  >
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {location}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
       </DialogContent>
     </Dialog>
   )

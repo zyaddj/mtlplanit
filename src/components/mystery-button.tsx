@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Sparkles } from "lucide-react"
+import { Sparkles, Star } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { fetchGooglePlaces } from '@/lib/google-places'
+import Image from "next/image"
 
 // Mock data for activities with complete information
 const allActivities = [
@@ -302,25 +303,84 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
           )}
 
           {step === 2 && randomActivity && (
-            <div className="space-y-4">
-              <div className="transform scale-90 origin-top">
-                <ActivityCard
-                  {...randomActivity}
-                  isFavorite={false}
-                  onToggleFavorite={() => {}}
-                />
+            <div className="space-y-6 p-4">
+              <div className="transform scale-100 origin-top">
+                <div className="bg-black/40 backdrop-blur-sm rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all">
+                  {/* Image Container */}
+                  <div className="relative w-full aspect-video">
+                    <Image
+                      src={randomActivity.image}
+                      alt={randomActivity.title}
+                      fill
+                      className="object-cover rounded-t-xl"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
+                  </div>
+
+                  {/* Content Container */}
+                  <div className="p-6 space-y-4">
+                    {/* Title and Rating */}
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                        {randomActivity.title} ✨
+                      </h3>
+                      <div className="flex items-center bg-black/40 px-3 py-1 rounded-full">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
+                        <span className="text-sm font-medium text-white">
+                          {randomActivity.rating.toFixed(1)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Category and Price */}
+                    <div className="flex items-center gap-3">
+                      <Badge className="bg-blue-500/20 text-blue-200 hover:bg-blue-500/30 transition-colors">
+                        {randomActivity.category}
+                      </Badge>
+                      <Badge className="bg-green-500/20 text-green-200 hover:bg-green-500/30 transition-colors">
+                        {randomActivity.price}
+                      </Badge>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-gray-300 leading-relaxed">
+                      {randomActivity.description}
+                    </p>
+
+                    {/* Location */}
+                    <div className="flex items-center text-gray-400">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span className="text-sm">{randomActivity.location}</span>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-4 pt-2">
+                      <Button
+                        onClick={handleFindActivity}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Try Another
+                      </Button>
+                      <Button
+                        onClick={() => window.open(randomActivity.googleMapsUrl, '_blank')}
+                        className="w-full bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-green-500/20"
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Open Maps
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-center gap-4">
-                <Button
-                  onClick={handleFindActivity}
-                  className="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium"
-                >
-                  Try Another
-                </Button>
+
+              {/* Start Over Button */}
+              <div className="flex justify-center">
                 <Button
                   onClick={resetAndClose}
                   variant="outline"
-                  className="border-blue-500/20 text-white hover:bg-blue-500/10"
+                  className="mt-4 border-white/10 text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
                 >
                   Start Over
                 </Button>
