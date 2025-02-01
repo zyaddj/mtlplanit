@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     // Construct location-based query
     let query = ''
     if (locations?.length) {
-      query = locations.map(location => 
+      query = locations.map((location: string) => 
         `activities OR attractions in ${location} Montreal`
       ).join(' OR ')
     } else {
