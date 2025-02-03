@@ -27,14 +27,26 @@ export async function POST(req: Request) {
 
     const BASE_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
     
+    // Base keywords for activities
+    const activityKeywords = [
+      'fun activities',
+      'popular attractions',
+      'things to do',
+      'must visit places',
+      'top rated spots'
+    ]
+    const randomKeyword = activityKeywords[Math.floor(Math.random() * activityKeywords.length)]
+    
     // Construct location-based query
     let query = ''
     if (locations?.length) {
-      query = locations.map((location: string) => 
-        `activities OR attractions in ${location} Montreal`
+      // If specific locations selected, search only in those areas
+      query = locations.map(location => 
+        `${randomKeyword} in ${location} Montreal`
       ).join(' OR ')
     } else {
-      query = 'popular activities OR attractions in Montreal'
+      // If no specific location, search all of Montreal
+      query = `${randomKeyword} in Montreal`
     }
 
     // Add budget qualifier if specified
@@ -45,7 +57,7 @@ export async function POST(req: Request) {
       query += ` ${priceKeyword}`
     }
 
-    // Add category filter if specified
+    // Add category filter if specified (for specific search)
     if (!isMystery && categories?.length) {
       query += ` AND (${categories.join(' OR ')})`
     }
@@ -68,10 +80,34 @@ export async function POST(req: Request) {
     }
 
     if (!data.results?.length) {
-      return NextResponse.json({ 
-        results: [],
-        message: "No activities found for your criteria. Try adjusting your filters."
-      })
+      // Return location-specific fallback data
+      const fallbackActivities = locations?.length ? [
+        {
+          id: `fallback-${locations[0]}`,
+          title: `${locations[0]} Adventure`,
+          category: categories?.[0] || "Local Attraction",
+          price: budget ? `${'$'.repeat(Math.ceil(budget/25))}` : 'Varies',
+          image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+          rating: 4.5,
+          description: `Explore the vibrant area of ${locations[0]} in Montreal.`,
+          location: `${locations[0]}, Montreal, QC`,
+          googleMapsUrl: `https://www.google.com/maps/search/${encodeURIComponent(locations[0])}+Montreal`,
+        }
+      ] : [
+        {
+          id: "mount-royal-hike",
+          title: "Mount Royal Sunset Hike",
+          category: "Active",
+          price: "Free",
+          image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+          rating: 4.7,
+          description: "Experience breathtaking views of Montreal from atop Mount Royal at sunset.",
+          location: "Mount Royal Park, Montreal, QC",
+          googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
+        }
+      ]
+      
+      return NextResponse.json({ results: fallbackActivities })
     }
 
     const places = data.results.map((place: GooglePlace) => ({
@@ -83,8 +119,8 @@ export async function POST(req: Request) {
       price: place.price_level ? `${'$'.repeat(place.price_level)}` : 'Free',
       image: place.photos?.[0]?.photo_reference 
         ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${place.photos[0].photo_reference}&key=${API_KEY}` 
-        : `https://source.unsplash.com/random/800x600/?montreal,${place.types[0]}`,
-      rating: place.rating || 4.0,
+        : 'https://images.unsplash.com/photo-1519681393784-d120267933ba',
+      rating: place.rating || 4.5,
       description: `Explore ${place.name}, located in ${place.formatted_address}`,
       location: place.formatted_address,
       googleMapsUrl: `https://www.google.com/maps/place/?q=place_id:${place.place_id}`
@@ -99,7 +135,7 @@ export async function POST(req: Request) {
         )
       : places
 
-    // For mystery button, return a random result
+    // For mystery button, return a random result from filtered places
     if (isMystery) {
       const validPlaces = filteredPlaces.length ? filteredPlaces : places
       const randomIndex = Math.floor(Math.random() * validPlaces.length)

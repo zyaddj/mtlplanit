@@ -17,9 +17,21 @@ export async function fetchGooglePlaces(filters: {
       throw new Error(data.error || 'Failed to fetch places')
     }
 
-    // Return empty array if no results
     if (!data.results?.length) {
-      return []
+      // Return mock data if no results found
+      return [
+        {
+          id: "mount-royal-hike",
+          title: "Mount Royal Sunset Hike",
+          category: "Active",
+          price: "Free",
+          image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
+          rating: 4.7,
+          description: "Experience breathtaking views of Montreal from atop Mount Royal at sunset.",
+          location: "Mount Royal Park, Montreal, QC",
+          googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
+        }
+      ]
     }
 
     return data.results
