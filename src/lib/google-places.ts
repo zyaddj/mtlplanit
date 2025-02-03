@@ -1,8 +1,6 @@
 export async function fetchGooglePlaces(filters: {
   locations?: string[]
   budget?: number
-  categories?: string[]
-  isMystery?: boolean
 }) {
   try {
     const response = await fetch('/api/places', {
@@ -30,7 +28,8 @@ export async function fetchGooglePlaces(filters: {
           description: "Experience breathtaking views of Montreal from atop Mount Royal at sunset.",
           location: "Mount Royal Park, Montreal, QC",
           googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
-        }
+        },
+        // Add 2-3 more fallback activities here
       ]
     }
 
