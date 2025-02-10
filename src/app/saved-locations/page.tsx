@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { ActivityCard } from "@/components/activity-card"
-import { Button } from "@/components/ui/button"
-import { MapPin } from 'lucide-react'
-import Link from 'next/link'
+import { ActivityCard } from "@/components/activity-card";
+import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
+import Link from "next/link";
+import { popularActivities } from "@/data/activities";
 
 export default function SavedLocations() {
   return (
@@ -13,7 +14,10 @@ export default function SavedLocations() {
         Saved Locations
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ActivityCard
+        {popularActivities.map((activity, index) => (
+          <ActivityCard key={index} {...activity} isFavorite={false} onToggleFavorite={() => {}} />
+        ))}
+        {/* <ActivityCard
           id="mount-royal-park"
           title="Mount Royal Park"
           category="Nature"
@@ -90,7 +94,7 @@ export default function SavedLocations() {
           googleMapsUrl="https://goo.gl/maps/laronde"
           isFavorite={false}
           onToggleFavorite={() => {}}
-        />
+        /> */}
       </div>
       <div className="text-center">
         <Link href="/" passHref>
@@ -100,6 +104,5 @@ export default function SavedLocations() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
-

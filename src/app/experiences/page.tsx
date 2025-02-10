@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ActivityCard } from "@/components/activity-card"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search } from "lucide-react"
-import { popularActivities } from "@/data/activities"
+import { useState } from "react";
+import { ActivityCard } from "@/components/activity-card";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { popularActivities } from "@/data/activities";
 
 const experiences = [
   {
@@ -70,20 +70,21 @@ const experiences = [
     description: "Enjoy a scenic cruise along the St. Lawrence River and see Montreal from the water.",
     location: "Old Port of Montreal, Montreal",
   },
-]
+];
 
 export default function ExperiencesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredActivities, setFilteredActivities] = useState(popularActivities)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredActivities, setFilteredActivities] = useState(popularActivities);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const filtered = popularActivities.filter(activity => 
-      activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      activity.category.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredActivities(filtered)
-  }
+    e.preventDefault();
+    const filtered = popularActivities.filter(
+      (activity) =>
+        activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        activity.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredActivities(filtered);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -92,7 +93,7 @@ export default function ExperiencesPage() {
       <main className="flex-grow pt-24 pb-20">
         <div className="container mx-auto px-4 space-y-8">
           <h1 className="text-4xl font-bold text-center text-gradient">All Experiences</h1>
-          
+
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-2">
             <Input
               type="text"
@@ -109,12 +110,7 @@ export default function ExperiencesPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredActivities.map((activity, index) => (
-              <ActivityCard
-                key={index}
-                {...activity}
-                isFavorite={false}
-                onToggleFavorite={() => {}}
-              />
+              <ActivityCard key={index} {...activity} isFavorite={false} onToggleFavorite={() => {}} />
             ))}
           </div>
 
@@ -126,6 +122,5 @@ export default function ExperiencesPage() {
 
       <Footer />
     </div>
-  )
+  );
 }
-

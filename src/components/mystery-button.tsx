@@ -1,27 +1,23 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Sparkles, Star } from "lucide-react"
-import { Slider } from "@/components/ui/slider"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ActivityCard } from "@/components/activity-card"
-import { useLanguage } from "@/contexts/LanguageContext"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, ChevronDown } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { MultiSelect } from "@/components/ui/multi-select"
-import { fetchGooglePlaces } from '@/lib/google-places'
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Sparkles, Star } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ActivityCard } from "@/components/activity-card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { fetchGooglePlaces } from "@/lib/google-places";
+import Image from "next/image";
+import { generateActivityFilterQueryParameter } from "@/lib/yelp-events";
+import { useRouter } from "next/navigation";
 
 // Mock data for activities with complete information
 const allActivities = [
@@ -90,7 +86,7 @@ const allActivities = [
     location: "160 Chemin Tour-de-l'Isle, Île Sainte-Hélène, Montreal, QC H3C 4G8",
     googleMapsUrl: "https://goo.gl/maps/8Z8Z8Z8Z8Z8Z8Z8Z8",
   },
-]
+];
 
 const locations = [
   "Downtown",
@@ -105,76 +101,84 @@ const locations = [
   "NDG",
   "Villeray",
   "Rosemont",
-]
+];
 
 export function MysteryButton({ children }: { children?: React.ReactNode }) {
-  const { t } = useLanguage()
-  const [isOpen, setIsOpen] = useState(false)
-  const [step, setStep] = useState(1)
-  const [budget, setBudget] = useState(50)
-  const [customBudget, setCustomBudget] = useState("")
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([])
-  const [randomActivity, setRandomActivity] = useState<(typeof allActivities)[0] | null>(null)
-  const [loading, setLoading] = useState(false)
+  const { t } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState(1);
+  const [budget, setBudget] = useState(50);
+  const [customBudget, setCustomBudget] = useState("");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [randomActivity, setRandomActivity] = useState<(typeof allActivities)[0] | null>(null);
+  // const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleCustomBudgetChange = (value: string) => {
-    const numValue = Number.parseFloat(value)
+    const numValue = Number.parseFloat(value);
     if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
-      setBudget(Math.min(numValue, 100))
-      setCustomBudget(value)
+      setBudget(Math.min(numValue, 100));
+      setCustomBudget(value);
     } else if (value === "") {
-      setCustomBudget("")
+      setCustomBudget("");
     }
-  }
+  };
 
   const handleLocationChange = (value: string) => {
-    setSelectedLocations(prev => {
+    setSelectedLocations((prev) => {
       if (prev.includes(value)) {
-        return prev.filter(loc => loc !== value)
+        return prev.filter((loc) => loc !== value);
       }
-      return [...prev, value]
-    })
-  }
+      return [...prev, value];
+    });
+  };
 
   const handleFindActivity = async () => {
-    setLoading(true)
-    try {
-      const activities = await fetchGooglePlaces({
-        locations: selectedLocations,
-        budget: budget
-      })
+    const filterActivitiesQueryParameter = generateActivityFilterQueryParameter({
+      locations: selectedLocations,
+      budget,
+    });
+    router.push(`/activities/filter?${filterActivitiesQueryParameter}`);
+    // setLoading(true);
+    // try {
+    //   const activities = await fetchGooglePlaces({
+    //     locations: selectedLocations,
+    //     budget: budget,
+    //   });
 
-      if (activities && activities.length > 0) {
-        const randomIndex = Math.floor(Math.random() * activities.length)
-        setRandomActivity(activities[randomIndex])
-        setStep(2)
-      } else {
-        // Handle no results
-        console.error('No activities found')
-      }
-    } catch (error) {
-      console.error('Error fetching activities:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    //   console.log("activities", activities);
+
+    //   if (activities && activities.length > 0) {
+    //     const randomIndex = Math.floor(Math.random() * activities.length);
+    //     setRandomActivity(activities[randomIndex]);
+    //     setStep(2);
+    //   } else {
+    //     // Handle no results
+    //     console.error("No activities found");
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching activities:", error);
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
 
   const resetAndClose = () => {
-    setStep(1)
-    setBudget(50)
-    setCustomBudget("")
-    setRandomActivity(null)
-    setSelectedLocations([])
-    setIsOpen(false)
-  }
+    setStep(1);
+    setBudget(50);
+    setCustomBudget("");
+    setRandomActivity(null);
+    setSelectedLocations([]);
+    setIsOpen(false);
+  };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
-        setIsOpen(open)
-        if (!open) resetAndClose()
+        setIsOpen(open);
+        if (!open) resetAndClose();
       }}
     >
       <DialogTrigger asChild>
@@ -186,10 +190,10 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
             hover:from-blue-700 hover:to-blue-600"
         >
           <Sparkles className="mr-2 h-5 w-5" />
-          {children || t('mysteryButton')}
+          {children || t("mysteryButton")}
         </Button>
       </DialogTrigger>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-[425px] dialog-background max-h-[90vh]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
@@ -208,8 +212,8 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                   <Slider
                     value={[budget]}
                     onValueChange={(value) => {
-                      setBudget(value[0])
-                      setCustomBudget(value[0].toFixed(2))
+                      setBudget(value[0]);
+                      setCustomBudget(value[0].toFixed(2));
                     }}
                     max={100}
                     step={1}
@@ -227,11 +231,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                   <div className="mt-8">
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
-                        >
+                        <Button variant="outline" size="sm" className="text-blue-300 border-blue-500  bg-transparent">
                           Set Custom Amount
                         </Button>
                       </PopoverTrigger>
@@ -262,10 +262,8 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                     className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors"
                   >
                     {showAdvancedFilters ? "Hide" : "Show"} Advanced Filters
-                    <ChevronDown 
-                      className={`w-4 h-4 transition-transform ${
-                        showAdvancedFilters ? 'rotate-180' : ''
-                      }`}
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${showAdvancedFilters ? "rotate-180" : ""}`}
                     />
                   </button>
                 </div>
@@ -279,9 +277,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-2"
                   >
-                    <label className="text-sm font-medium text-gray-200">
-                      Filter by Location(s)
-                    </label>
+                    <label className="text-sm font-medium text-gray-200">Filter by Location(s)</label>
                     <MultiSelect
                       options={locations}
                       selected={selectedLocations}
@@ -292,12 +288,8 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                 )}
               </AnimatePresence>
 
-              <Button
-                className="w-full btn-gradient mt-4"
-                onClick={handleFindActivity}
-                disabled={loading}
-              >
-                {loading ? "Finding Activity..." : "Find My Mystery Activity!"}
+              <Button className="w-full btn-gradient mt-4" onClick={handleFindActivity}>
+                Find My Mystery Activity!
               </Button>
             </>
           )}
@@ -327,9 +319,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                       </h3>
                       <div className="flex items-center bg-black/40 px-3 py-1 rounded-full">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                        <span className="text-sm font-medium text-white">
-                          {randomActivity.rating.toFixed(1)}
-                        </span>
+                        <span className="text-sm font-medium text-white">{randomActivity.rating.toFixed(1)}</span>
                       </div>
                     </div>
 
@@ -344,9 +334,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                     </div>
 
                     {/* Description */}
-                    <p className="text-gray-300 leading-relaxed">
-                      {randomActivity.description}
-                    </p>
+                    <p className="text-gray-300 leading-relaxed">{randomActivity.description}</p>
 
                     {/* Location */}
                     <div className="flex items-center text-gray-400">
@@ -364,7 +352,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
                         Try Another
                       </Button>
                       <Button
-                        onClick={() => window.open(randomActivity.googleMapsUrl, '_blank')}
+                        onClick={() => window.open(randomActivity.googleMapsUrl, "_blank")}
                         className="w-full bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 text-white font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-green-500/20"
                       >
                         <MapPin className="w-4 h-4 mr-2" />
@@ -394,7 +382,7 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
             <Button
               variant="outline"
               onClick={() => setShowAdvancedFilters(false)}
-              className="text-white hover:bg-white/10"
+              className="text-white bg-transparent"
             >
               Done with Filters
             </Button>
@@ -402,6 +390,5 @@ export function MysteryButton({ children }: { children?: React.ReactNode }) {
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
