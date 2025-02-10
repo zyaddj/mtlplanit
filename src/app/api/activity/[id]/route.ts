@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server'
 const BASE_API = "https://api.yelp.com/v3/events";
 
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }
+  _request: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = context.params
+    const { id } = params
 
-    // Mock data for now
+    // Mock data for now - we'll replace this with actual data later
     const activity = {
       id: "mount-royal-hike",
       title: "Mount Royal Sunset Hike",
