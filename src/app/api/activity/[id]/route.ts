@@ -4,10 +4,12 @@ const BASE_API = "https://api.yelp.com/v3/events";
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const response = await fetch(`${BASE_API}/${params.id}`, {
+    const { id } = await params;
+
+    const response = await fetch(`${BASE_API}/${id}`, {
       headers: {
         accept: "application/json",
         authorization: `Bearer ${process.env.YELP_ACCESS_TOKEN}`,
