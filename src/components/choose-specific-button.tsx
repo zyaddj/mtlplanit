@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { Slider } from "@/components/ui/slider"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 import {
   MapPin,
   Activity,
@@ -23,11 +23,13 @@ import {
   Mic,
   Theater,
   ChevronDown,
-} from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ActivityCard } from "@/components/activity-card"
-import { useLanguage } from "@/contexts/LanguageContext"
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ActivityCard } from "@/components/activity-card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { fetchActivity, generateActivityFilterQueryParameter } from "@/lib/yelp-events";
+import { useRouter } from "next/navigation";
 
 const locations = [
   "Downtown",
@@ -51,7 +53,7 @@ const locations = [
   "Ahuntsic",
   "Pointe-Claire",
   "Dorval",
-]
+];
 
 const activities = [
   { name: "Sports", icon: Activity },
@@ -66,161 +68,271 @@ const activities = [
   { name: "Museums", icon: Building },
   { name: "Live Music", icon: Mic },
   { name: "Theater", icon: Theater },
-]
+];
 
 // Mock data for activities with complete information
+// const allActivities = [
+//   {
+//     title: "Mount Royal Sunset Hike",
+//     category: "Active",
+//     price: "Free",
+//     image:
+//       "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+//     rating: 4.7,
+//     description:
+//       "Experience breathtaking views of Montreal from atop Mount Royal at sunset. This moderate hike offers a perfect blend of nature and city views, culminating in a stunning panorama of the city skyline as the sun sets.",
+//     location: "Mount Royal Park, Montreal, QC",
+//     googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
+//   },
+//   {
+//     title: "Old Port Food Tour",
+//     category: "Food & Drink",
+//     price: "$75",
+//     image:
+//       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+//     rating: 4.8,
+//     description:
+//       "Savor the flavors of Old Montreal with this guided culinary adventure. Sample local delicacies, learn about the area's rich history, and discover hidden gems in one of the city's most charming neighborhoods.",
+//     location: "Old Port of Montreal, Montreal, QC",
+//     googleMapsUrl: "https://goo.gl/maps/QMXmqKwjsTZwvqSt8",
+//   },
+//   {
+//     title: "Jazz Night at Upstairs Jazz Bar",
+//     category: "Live Music",
+//     price: "$20",
+//     image:
+//       "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+//     rating: 4.6,
+//     description:
+//       "Experience Montreal's vibrant jazz scene at one of the city's most renowned venues. Enjoy live performances by local and international artists in an intimate setting with great acoustics and ambiance.",
+//     location: "1254 Mackay St, Montreal, QC H3G 2H4",
+//     googleMapsUrl: "https://goo.gl/maps/5QX7vZ7Z8Z9Z9Z9Z9",
+//   },
+//   {
+//     title: "Botanical Garden Tour",
+//     category: "Nature",
+//     price: "$20",
+//     image:
+//       "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1742&q=80",
+//     rating: 4.6,
+//     description:
+//       "Explore the beautiful Montreal Botanical Garden with a guided tour. Discover a diverse collection of plant species from around the world, themed gardens, and the popular Insectarium. A perfect outing for nature lovers and photography enthusiasts.",
+//     location: "4101 Sherbrooke St E, Montreal, QC H1X 2B2",
+//     googleMapsUrl: "https://goo.gl/maps/7Z7Z7Z7Z7Z7Z7Z7Z7",
+//   },
+//   {
+//     title: "Biosphere Environmental Museum",
+//     category: "Museums",
+//     price: "$15",
+//     image:
+//       "https://images.unsplash.com/photo-1582711012153-0ef6ef75d08d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+//     rating: 4.5,
+//     description:
+//       "Learn about environmental issues and sustainable solutions at this unique museum. Housed in the iconic geodesic dome from Expo 67, the Biosphere offers interactive exhibits and thought-provoking displays on climate change, biodiversity, and eco-technologies.",
+//     location: "160 Chemin Tour-de-l'Isle, Île Sainte-Hélène, Montreal, QC H3C 4G8",
+//     googleMapsUrl: "https://goo.gl/maps/8Z8Z8Z8Z8Z8Z8Z8Z8",
+//   },
+// ];
+
 const allActivities = [
   {
-    title: "Mount Royal Sunset Hike",
-    category: "Active",
-    price: "Free",
-    image:
-      "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-    rating: 4.7,
+    attending_count: 1,
+    category: "other",
+    cost: 15,
+    cost_max: null,
     description:
-      "Experience breathtaking views of Montreal from atop Mount Royal at sunset. This moderate hike offers a perfect blend of nature and city views, culminating in a stunning panorama of the city skyline as the sun sets.",
-    location: "Mount Royal Park, Montreal, QC",
-    googleMapsUrl: "https://goo.gl/maps/8WKt9YZZgJN2Ld6J6",
+      "Our next Trivia night is coming up, so grab your favorite know-it-all and make sure to meet us at PLAY Louisville on Thursday, June 6th for Olympics of the...",
+    event_site_url:
+      "https://www.yelp.com/events/louisville-voices-trivia-night?adjust_creative=gs24dJ_OAIkD4UHGgwCUNA&utm_campaign=yelp_api_v3&utm_medium=api_v3_event_search&utm_source=gs24dJ_OAIkD4UHGgwCUNA",
+    id: "louisville-voices-trivia-night",
+    image_url: "https://s3-media3.fl.yelpcdn.com/ephoto/77JxlIinkKjmUZiVbJ5Wpg/o.jpg",
+    interested_count: 0,
+    is_canceled: false,
+    is_free: false,
+    is_official: false,
+    latitude: 38.2564549930724,
+    longitude: -85.7306980714202,
+    name: "VOICES trivia night",
+    tickets_url: null,
+    time_end: null,
+    time_start: "2025-06-06T18:30:00-04:00",
+    location: {
+      address1: "1101 E Washington St",
+      address2: "",
+      address3: "",
+      city: "Louisville",
+      zip_code: "40206",
+      country: "US",
+      state: "KY",
+      display_address: ["1101 E Washington St", "Louisville, KY 40206"],
+      cross_streets: "",
+    },
+    business_id: "play-louisville",
   },
   {
-    title: "Old Port Food Tour",
-    category: "Food & Drink",
-    price: "$75",
-    image:
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-    rating: 4.8,
+    attending_count: 1,
+    category: "kids-family",
+    cost: 20,
+    cost_max: 35,
     description:
-      "Savor the flavors of Old Montreal with this guided culinary adventure. Sample local delicacies, learn about the area's rich history, and discover hidden gems in one of the city's most charming neighborhoods.",
-    location: "Old Port of Montreal, Montreal, QC",
-    googleMapsUrl: "https://goo.gl/maps/QMXmqKwjsTZwvqSt8",
+      "Create a unique art piece through chaotic processes. Where you can only influence the final design. Investigate Pendulum painting, Scrape painting and more!",
+    event_site_url:
+      "https://www.yelp.com/events/louisville-makerplace-workshop-chaotic-art-2?adjust_creative=gs24dJ_OAIkD4UHGgwCUNA&utm_campaign=yelp_api_v3&utm_medium=api_v3_event_search&utm_source=gs24dJ_OAIkD4UHGgwCUNA",
+    id: "louisville-makerplace-workshop-chaotic-art-2",
+    image_url: "https://s3-media4.fl.yelpcdn.com/ephoto/c98bTxMKbPknr00x5TgtRA/o.jpg",
+    interested_count: 0,
+    is_canceled: false,
+    is_free: false,
+    is_official: false,
+    latitude: 38.2576692,
+    longitude: -85.7627395,
+    name: "MakerPlace Workshop: Chaotic Art",
+    tickets_url: "https://emuseum.kysciencecenter.org/performance.aspx?PID=222207",
+    time_end: "2025-06-07T12:00:00-04:00",
+    time_start: "2025-06-07T10:00:00-04:00",
+    location: {
+      address1: "727 W Main St, Louisville, KY, United States, Kentucky 40202",
+      address2: "",
+      address3: "",
+      city: "Louisville",
+      zip_code: "40202",
+      country: "US",
+      state: "KY",
+      display_address: ["727 W Main St, Louisville, KY 40202"],
+      cross_streets: "",
+    },
+    business_id: null,
   },
   {
-    title: "Jazz Night at Upstairs Jazz Bar",
-    category: "Live Music",
-    price: "$20",
-    image:
-      "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-    rating: 4.6,
+    attending_count: 1,
+    category: "kids-family",
+    cost: 20,
+    cost_max: 35,
     description:
-      "Experience Montreal's vibrant jazz scene at one of the city's most renowned venues. Enjoy live performances by local and international artists in an intimate setting with great acoustics and ambiance.",
-    location: "1254 Mackay St, Montreal, QC H3G 2H4",
-    googleMapsUrl: "https://goo.gl/maps/5QX7vZ7Z8Z9Z9Z9Z9",
+      "Assemble a home for your succulents that is both practical and beautiful in this glasswork workshop that will expand on your skills with a soldering iron.",
+    event_site_url:
+      "https://www.yelp.com/events/louisville-makerplace-workshop-geometric-terrariums?adjust_creative=gs24dJ_OAIkD4UHGgwCUNA&utm_campaign=yelp_api_v3&utm_medium=api_v3_event_search&utm_source=gs24dJ_OAIkD4UHGgwCUNA",
+    id: "louisville-makerplace-workshop-geometric-terrariums",
+    image_url: "https://s3-media4.fl.yelpcdn.com/ephoto/LvCz55V4tJsojTJN-bvMRw/o.jpg",
+    interested_count: 0,
+    is_canceled: false,
+    is_free: false,
+    is_official: false,
+    latitude: 38.2576692,
+    longitude: -85.7627395,
+    name: "MakerPlace Workshop: Geometric Terrariums",
+    tickets_url: "https://emuseum.kysciencecenter.org/performance.aspx?PID=222208",
+    time_end: "2025-06-28T12:00:00-04:00",
+    time_start: "2025-06-28T10:00:00-04:00",
+    location: {
+      address1: "727 W Main St, Louisville, KY, United States, Kentucky 40202",
+      address2: "",
+      address3: "",
+      city: "Louisville",
+      zip_code: "40202",
+      country: "US",
+      state: "KY",
+      display_address: ["727 W Main St, Louisville, KY 40202"],
+      cross_streets: "",
+    },
+    business_id: null,
   },
-  {
-    title: "Botanical Garden Tour",
-    category: "Nature",
-    price: "$20",
-    image:
-      "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1742&q=80",
-    rating: 4.6,
-    description:
-      "Explore the beautiful Montreal Botanical Garden with a guided tour. Discover a diverse collection of plant species from around the world, themed gardens, and the popular Insectarium. A perfect outing for nature lovers and photography enthusiasts.",
-    location: "4101 Sherbrooke St E, Montreal, QC H1X 2B2",
-    googleMapsUrl: "https://goo.gl/maps/7Z7Z7Z7Z7Z7Z7Z7Z7",
-  },
-  {
-    title: "Biosphere Environmental Museum",
-    category: "Museums",
-    price: "$15",
-    image:
-      "https://images.unsplash.com/photo-1582711012153-0ef6ef75d08d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-    rating: 4.5,
-    description:
-      "Learn about environmental issues and sustainable solutions at this unique museum. Housed in the iconic geodesic dome from Expo 67, the Biosphere offers interactive exhibits and thought-provoking displays on climate change, biodiversity, and eco-technologies.",
-    location: "160 Chemin Tour-de-l'Isle, Île Sainte-Hélène, Montreal, QC H3C 4G8",
-    googleMapsUrl: "https://goo.gl/maps/8Z8Z8Z8Z8Z8Z8Z8Z8",
-  },
-]
+];
 
 export function ChooseSpecificButton({ children }: { children?: React.ReactNode }) {
-  const { t } = useLanguage()
-  const [step, setStep] = useState(1)
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([])
-  const [selectedActivities, setSelectedActivities] = useState<string[]>([])
-  const [budget, setBudget] = useState(50)
-  const [customBudget, setCustomBudget] = useState("")
-  const [filteredActivities, setFilteredActivities] = useState(allActivities)
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const { t } = useLanguage();
+  const [step, setStep] = useState(1);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [budget, setBudget] = useState(50);
+  const [customBudget, setCustomBudget] = useState("");
+  const [filteredActivities, setFilteredActivities] = useState(allActivities);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const router = useRouter();
 
   const toggleSelection = (item: string, current: string[], setter: React.Dispatch<React.SetStateAction<string[]>>) => {
     if (current.includes(item)) {
-      setter(current.filter((i) => i !== item))
+      setter(current.filter((i) => i !== item));
     } else {
-      setter([...current, item])
+      setter([...current, item]);
     }
-  }
+  };
 
   const resetAndClose = () => {
-    setStep(1)
-    setSelectedLocations([])
-    setSelectedActivities([])
-    setBudget(50)
-    setCustomBudget("")
-    setFilteredActivities(allActivities)
-  }
+    setStep(1);
+    setSelectedLocations([]);
+    setSelectedActivities([]);
+    setBudget(50);
+    setCustomBudget("");
+    setFilteredActivities(allActivities);
+  };
 
   const handleBack = () => {
     if (step > 1) {
-      setStep(step - 1)
+      setStep(step - 1);
     }
-  }
+  };
 
   const handleNext = () => {
     if (step < 3) {
-      setStep(step + 1)
+      setStep(step + 1);
     } else {
-      filterActivities()
+      filterActivities();
     }
-  }
+  };
 
-  const filterActivities = () => {
-    const filtered = allActivities.filter((activity) => {
-      const locationMatch =
-        selectedLocations.length === 0 || selectedLocations.includes(activity.location.split(",")[0].trim())
-      const categoryMatch = selectedActivities.length === 0 || selectedActivities.includes(activity.category)
-      const priceMatch = activity.price === "Free" || Number.parseFloat(activity.price.replace("$", "")) <= budget
-      return locationMatch && categoryMatch && priceMatch
-    })
-    setFilteredActivities(filtered)
-    setStep(4)
-  }
+  const filterActivities = async () => {
+    const filterActivitiesQueryParameter = generateActivityFilterQueryParameter({
+      locations: selectedLocations,
+      activities: selectedActivities,
+      budget,
+    });
+    router.push(`/activities/filter?${filterActivitiesQueryParameter}`);
+    // const filtered = allActivities.filter((activity) => {
+    //   // const locationMatch =
+    //   //   selectedLocations.length === 0 || selectedLocations.includes(activity.location.split(",")[0].trim());
+    //   const categoryMatch = selectedActivities.length === 0 || selectedActivities.includes(activity.category);
+    //   const priceMatch = activity.is_free || activity.cost <= budget;
+    //   return categoryMatch && priceMatch;
+    // });
+    // setFilteredActivities(filtered);
+    // setStep(4);
+  };
 
   const getCurrentSelections = () => {
     switch (step) {
       case 1:
-        return { items: locations, selected: selectedLocations, setter: setSelectedLocations }
+        return { items: locations, selected: selectedLocations, setter: setSelectedLocations };
       case 2:
-        return { items: activities.map((a) => a.name), selected: selectedActivities, setter: setSelectedActivities }
+        return { items: activities.map((a) => a.name), selected: selectedActivities, setter: setSelectedActivities };
       case 3:
-        return null
+        return null;
     }
-  }
+  };
 
-  const { items, selected, setter } = getCurrentSelections() || {}
+  const { items, selected, setter } = getCurrentSelections() || {};
 
   const stepContent = [
     { title: "Choose Location(s)", icon: MapPin },
     { title: "Activity Type(s)", icon: Activity },
     { title: "Budget", icon: DollarSign },
-  ]
+  ];
 
   const handleCustomBudgetChange = (value: string) => {
-    const numValue = Number.parseFloat(value)
+    const numValue = Number.parseFloat(value);
     if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
-      setBudget(Math.min(numValue, 100))
-      setCustomBudget(value)
+      setBudget(Math.min(numValue, 100));
+      setCustomBudget(value);
     } else if (value === "") {
-      setCustomBudget("")
+      setCustomBudget("");
     }
-  }
+  };
 
   const toggleLocation = (location: string) => {
-    setSelectedLocations(prev => 
-      prev.includes(location) 
-        ? prev.filter(l => l !== location)
-        : [...prev, location]
-    )
-  }
+    setSelectedLocations((prev) =>
+      prev.includes(location) ? prev.filter((l) => l !== location) : [...prev, location]
+    );
+  };
 
   return (
     <Dialog onOpenChange={(open) => !open && resetAndClose()}>
@@ -232,7 +344,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             shadow-md hover:shadow-lg transition-all backdrop-blur-sm
             hover:from-white hover:to-white/90 border border-blue-200"
         >
-          {children || t('chooseSpecific')}
+          {children || t("chooseSpecific")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col dialog-background">
@@ -265,8 +377,8 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                   index + 1 === step
                     ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-400"
                     : index + 1 < step
-                      ? "text-blue-500"
-                      : "text-gray-400"
+                    ? "text-blue-500"
+                    : "text-gray-400"
                 }`}
               >
                 <div
@@ -274,8 +386,8 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                     index + 1 === step
                       ? "bg-gradient-to-r from-blue-600 to-blue-400"
                       : index + 1 < step
-                        ? "bg-blue-500"
-                        : "bg-gray-600"
+                      ? "bg-blue-500"
+                      : "bg-gray-600"
                   }`}
                 >
                   <s.icon className="w-5 h-5 text-white" />
@@ -295,14 +407,14 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
               transition={{ duration: 0.3 }}
             >
               {step === 3 ? (
-                <div className="px-4 space-y-6">
-                  <h3 className="text-lg font-semibold text-center text-white">Set Your Budget</h3>
+                <div className="px-4 overflow-hidden">
+                  <h3 className="text-lg font-semibold text-center text-white mb-6">Set Your Budget</h3>
                   <div className="space-y-2">
                     <Slider
                       value={[budget]}
                       onValueChange={(value) => {
-                        setBudget(value[0])
-                        setCustomBudget(value[0].toFixed(2))
+                        setBudget(value[0]);
+                        setCustomBudget(value[0].toFixed(2));
                       }}
                       max={100}
                       step={1}
@@ -320,11 +432,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                     <div className="mt-8">
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-blue-300 border-blue-500 hover:bg-blue-500/20"
-                          >
+                          <Button variant="outline" size="sm" className="text-blue-300 border-blue-500  bg-transparent">
                             Set Custom Amount
                           </Button>
                         </PopoverTrigger>
@@ -354,10 +462,10 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
                 <div className="px-4 space-y-6">
                   {filteredActivities.length > 0 ? (
                     filteredActivities.map((activity, index) => (
-                      <ActivityCard 
-                        key={index} 
-                        {...activity} 
-                        id={activity.title.toLowerCase().replace(/\s+/g, '-')}
+                      <ActivityCard
+                        key={index}
+                        {...activity}
+                        // id={activity.name.toLowerCase().replace(/\s+/g, "-")}
                         isFavorite={false}
                         onToggleFavorite={() => {}}
                       />
@@ -452,11 +560,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors w-full justify-center"
           >
             {showAdvancedFilters ? "Hide" : "Show"} Advanced Filters
-            <ChevronDown 
-              className={`w-4 h-4 transition-transform ${
-                showAdvancedFilters ? 'rotate-180' : ''
-              }`}
-            />
+            <ChevronDown className={`w-4 h-4 transition-transform ${showAdvancedFilters ? "rotate-180" : ""}`} />
           </button>
         </div>
         {showAdvancedFilters && (
@@ -467,9 +571,7 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
             className="space-y-4"
           >
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">
-                Locations
-              </label>
+              <label className="text-sm font-medium text-gray-200">Locations</label>
               <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
                 {locations.map((location) => (
                   <Badge
@@ -492,6 +594,5 @@ export function ChooseSpecificButton({ children }: { children?: React.ReactNode 
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
