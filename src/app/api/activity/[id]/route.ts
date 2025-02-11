@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 
 const BASE_API = "https://api.yelp.com/v3/events";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
-    const { id } = await params;
+    // const { searchParams } = new URL(req.url);
+    const dynamicParams = await params;
 
-    const response = await fetch(`${BASE_API}/${id}`, {
+    const response = await fetch(`${BASE_API}/${dynamicParams.id}`, {
       headers: {
         accept: "application/json",
         authorization: `Bearer ${process.env.YELP_ACCESS_TOKEN}`,

@@ -11,7 +11,7 @@ import { SignInDialog } from "@/components/auth/sign-in"
 export default function FavoritesPage() {
   const { favorites } = useFavorites()
   const { user } = useAuth()
-  const favoriteActivities = popularActivities.filter(activity => favorites.includes(activity.name))
+  const favoriteActivities = popularActivities.filter(activity => favorites.includes(activity.title))
 
   if (user?.isAnonymous) {
     return (
