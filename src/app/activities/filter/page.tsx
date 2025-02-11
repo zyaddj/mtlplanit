@@ -1,31 +1,11 @@
 "use client";
-import { FilteredResults } from "@/components/filtered-results";
+import FilterActivities from "@/components/filter-activities";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { fetchActivity } from "@/lib/yelp-events";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 
-export default function FilterActivities() {
-  const searchParams = useSearchParams();
-  const [filteredActivities, setFilteredActivities] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetchActivity(searchParams.toString())
-      .then((data) => setFilteredActivities(data))
-      .catch((error) => setError(error))
-      .finally(() => setIsLoading(false));
-  }, [searchParams]);
-
-  if (error) {
-    <p className="text-center">{error}</p>;
-  }
-
+export default function Filter() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -39,16 +19,9 @@ export default function FilterActivities() {
           >
             Something Specific Activities
           </motion.h1>
-
-          {isLoading ? (
-            <div className="h-screen w-full flex justify-center items-center">
-              <div className="flex gap-2">
-                <Loader2 className="animate-spin" /> Loading...
-              </div>
-            </div>
-          ) : (
-            <FilteredResults activities={filteredActivities} />
-          )}
+          <Suspense fallback={<p>Loading...</p>}>
+            <FilterActivities />
+          </Suspense>
         </div>
       </main>
       <Footer />
