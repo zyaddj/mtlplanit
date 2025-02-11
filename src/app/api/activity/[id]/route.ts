@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const BASE_API = "https://api.yelp.com/v3/events";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // const { searchParams } = new URL(req.url);
     const dynamicParams = await params;

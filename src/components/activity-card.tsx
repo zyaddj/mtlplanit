@@ -4,14 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Star, MapPin, Send, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
-import { Activity } from "@/data/activities";
 import { useAuth } from "@/contexts/AuthContext";
 import { SignInDialog } from "@/components/auth/sign-in";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Link from "next/link";
 
