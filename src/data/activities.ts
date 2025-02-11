@@ -24,11 +24,26 @@ import { IActivity } from "@/lib/yelp-events";
 //   }
 // ]
 
+export interface Activity {
+  id: string;
+  name: string;
+  category: string;
+  cost: number;
+  image_url: string;
+  description: string;
+  location: {
+    display_address: string[];
+  };
+  is_free: boolean;
+  latitude: number;
+  longitude: number;
+  time_start: string;
+}
+
 export const popularActivities: IActivity[] = [
   {
     category: "other",
     cost: 15,
-
     description:
       "Our next Trivia night is coming up, so grab your favorite know-it-all and make sure to meet us at PLAY Louisville on Thursday, June 6th for Olympics of the...",
     id: "louisville-voices-trivia-night",
